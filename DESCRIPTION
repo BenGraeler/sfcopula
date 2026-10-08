@@ -1,0 +1,53 @@
+Package: sfcopula
+Type: Package
+Title: Copula Driven Analysis of Spatial and Spatio-Temporal Data Based on 'sf' and 'stars'
+Version: 0.1-0
+Date: 2026-10-08
+Authors@R: c(person("Benedikt", "Graeler", role = c("aut", "cre"),
+                    email = "b.graeler@52north.org"),
+             person("Marius", "Appel", role = "ctb"))
+Maintainer: Benedikt Graeler <b.graeler@52north.org>
+Description: A framework to analyse multivariate, spatial and spatio-temporal
+  data via copulas, vine copulas and hierarchical Kendall copulas. It is the
+  successor of the 'spcopula' package: spatial data is provided as simple
+  features ('sf') and spatio-temporal data as vector data cubes ('stars') with
+  a geometry and a time dimension. Additionally, support for calculating
+  different multivariate return periods based on copulas and vine copulas is
+  implemented.
+License: GPL-3
+LazyLoad: yes
+LazyData: yes
+Depends: R (>= 4.1.0), copula (>= 1.0-0), VC2copula (>= 0.1.0)
+Imports: methods, sf (>= 1.0-0), stars (>= 0.6-0), VineCopula (>= 2.4.0)
+Suggests: evd, testthat (>= 3.0.0)
+Config/testthat/edition: 3
+URL: https://github.com/bengraeler/sfcopula
+Encoding: UTF-8
+Collate:
+  Classes.R
+  deprecated.R
+  sfHelpers.R
+  fastEval.R
+  empiricalCopula.R
+  partialDerivatives.R
+  cqsCopula.R
+  asCopula.R 
+  leafCopula.R
+  mixtureCopula.R
+  spCopula.R 
+  stCopula.R
+  spatialPreparation.R
+  spatio-temporalPreparation.R
+  distanceVineCopula.R
+  covariateVineCopula.R
+  prediction.R
+  utilities.R
+  returnPeriods.R
+  spatialGaussianCopula.R
+  tawn3pCopula.R
+  tailDependenceFunctions.R
+  KendallDistribution.R
+  hkCopula.R
+  trunCopula.R
+  spGeometric.R
+  upgrade.R

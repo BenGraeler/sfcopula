@@ -1,0 +1,24 @@
+# R
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+*.Rcheck/
+sfcopula_*.tar.gz
+src/*.o
+src/*.so
+src/*.dll
+
+# vignette builds
+vignettes/*.aux
+vignettes/*.log
+vignettes/*.out
+vignettes/*.tex
+vignettes/*.bbl
+vignettes/*.blg
+vignettes/*.toc
+vignettes/*.synctex.gz
+vignettes/*.pdf
+
+# Python helpers in data-raw
+__pycache__/

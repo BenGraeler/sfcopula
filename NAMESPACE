@@ -1,0 +1,83 @@
+import(copula)
+import(VC2copula)
+importFrom(sf, st_geometry, st_geometry_type, st_coordinates, st_distance,
+           st_is_longlat, st_bbox, st_crs, st_sfc, st_point, st_sf)
+importFrom(stars, st_dimensions, st_get_dimension_values, st_as_stars)
+
+importFrom("graphics", "abline", "smoothScatter")
+importFrom("stats", "D", "approxfun", "complete.cases", "cor", "ecdf", "integrate", "lm", "setNames",
+           "optim", "optimise", "optimize", "pnorm", "predict", "pt",
+           "qnorm", "qt", "quantile", "runif", "uniroot", "var")
+importFrom("utils", "setTxtProgressBar", "txtProgressBar", "tail", "capture.output", "str")
+
+# methods
+importFrom(methods,getClassDef)
+importFrom(methods,getSlots,slotNames,"slot<-")
+importFrom(methods,is)
+importFrom(methods,new)
+importFrom(methods,representation)
+importFrom(methods,setClass,validObject)
+importFrom(methods,setMethod)
+importFrom(methods,signature)
+
+# VineCopula
+importFrom(VineCopula, TauMatrix, BiCopSelect)
+
+
+# constructor
+export(asCopula, cqsCopula)
+export(tawn3pCopula)
+export(spatial_copula, spacetime_copula)
+export(distance_vine_copula)
+export(covariate_vine_copula)
+export(spatial_gauss_copula)
+export(neighbourhood)
+export(empiricalCopula, genEmpCop, empSurCopula, genEmpSurCop)
+export(mixtureCopula)
+export(hkCopula)
+export(trunCopula)
+
+# general functions
+export(rankTransform, dependencePlot, unitScatter, univScatter)
+export(fitCopula)
+export(dduCopula,ddvCopula)
+export(invdduCopula, invddvCopula)
+export(qCopula_u, qCopula_v, rCopula_y)
+export(cond_vine, cond_covariate)
+export(spatial_gauss_loglik)
+
+# spatial and spatio-temporal data
+export(neighbours, reduce_neighbours, as_spacetime_cube)
+export(upgrade_spcopula, load_spcopula)
+export(calc_bins)
+export(tree_dists, drop_tree)
+
+# fitting
+export(fit_cor_fun, loglik_by_lags, fit_spatial_copula, compose_spatial_copula)
+export(bivJointDepFun, lowerBivJointDepFun, upperBivJointDepFun)
+export(empBivJointDepFun, lowerEmpBivJointDepFun, upperEmpBivJointDepFun)
+
+# MRP functions
+export(genEmpKenFun, genInvKenFun)
+export(kendallRP, criticalLevel, kendallDistribution, getKendallDistr)
+export(criticalPair, criticalTriple)
+export(kendall)
+
+## classes
+exportClasses(asCopula, cqsCopula, tawn3pCopula, neighbourhood, empiricalCopula, empSurCopula)
+exportClasses(spatial_copula, spacetime_copula, distance_vine_copula)
+exportClasses(covariate_vine_copula, spatial_gauss_copula, distance_copula)
+exportClasses(mixtureCopula)
+exportClasses(hkCopula)
+exportClasses(trunCopula)
+
+## methods
+exportMethods(predict, cond_vine)
+
+# deprecated spcopula-style names
+export(spCopula, stCopula, spGeomCopula, spVineCopula, stVineCopula, stCoVarVineCopula,
+       stNeighbourhood, getNeighbours, getStNeighbours, reduceNeighbours, stCube,
+       calcBins, fitCorFun, loglikByCopulasLags, loglikByCopulasStLags,
+       fitSpCopula, composeSpCopula, dropSpTree, dropStTree, calcSpTreeDists,
+       condSpVine, condStVine, condStCoVarVine, condCovariate,
+       spCopPredict, stCopPredict, spGaussCopPredict, spGaussLogLik)

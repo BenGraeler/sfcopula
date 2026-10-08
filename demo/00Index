@@ -1,0 +1,6 @@
+MRP		The MRP demo gives insight in the code used in the paper: Multivariate return periods in hydrology: a critical and practical review focusing on synthetic design hydrograph estimation, by Gräler et al. (2013), HESS-17-1281-2013.
+spatial_copula		A demo illustrating the estimation of a single spatial tree vine copula for sf point data.
+pure_spatial_vine_copula  	A demo illustrating the estimation of a pure spatial vine copula for sf point data.
+spacetime_vine_copula_fit    A demo corresponding to the vignette estimating a spatio-temporal vine copula for a stars vector data cube.
+tailDepFunctions    A demo illustrating the empirical tail dependece function with parametric parametric tail dependence functions for different families of copulas.
+spacetime_covar_vine_copula    A demo redoing the estimation of spatio-temporal covariate vine copula as it is illustrated in a paper to be submitted to JSS. The demo uses a temporal subset and a reduced felxibility yielding a different spatio-temporal covariate vine copula stCVVC.
