@@ -2,10 +2,12 @@
 
 The sfcopula package models spatial and spatio-temporal random fields with vine copulas. It is the successor of
 [spcopula](https://github.com/bengraeler/spcopula) and handles data with [sf](https://r-spatial.github.io/sf/) and
-[stars](https://r-spatial.github.io/stars/) instead of the retired sp and spacetime packages.
+[stars](https://r-spatial.github.io/stars/) instead of the former sp and spacetime packages. The starting point of 
+this new package has been developed with the help of AI based on the previous implementation spcopula. This fresh 
+start has also been used to streamline several 'historic' decisions looking at the complete package.
 
 Vine copulas capture the dependence structure, and their bivariate building blocks depend on the distances
-separating the locations. A correlogram based on Kendall's tau (compare the variogram in geostatistics/kriging)
+separating the locations. A correlogram based on Kendall's tau (comparable to the variogram in geostatistics/kriging)
 models how the strength of dependence changes with distance. The package can estimate the dependence structure,
 and interpolate and simulate the modelled random fields. It also calculates multivariate return periods based on
 bivariate copulas or vine copulas.
@@ -76,8 +78,7 @@ results:
   distances in **metres** (`sf::st_distance`), whereas sp returned kilometres. Correlograms and spatial copulas fitted
   on lon/lat data therefore need distances in metres.
 * Predictions are added as a column to the `sf` target, or as an attribute to the `stars` target.
-* With identical random seeds, the results reproduce those of spcopula 0.2-5. The test suite checks this for
-  neighbourhoods, bins, fits and predictions.
+* With identical random seeds, the results reproduce those of spcopula 0.2-5.
 
 ## Background
 
