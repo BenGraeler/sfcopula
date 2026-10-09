@@ -8,9 +8,9 @@ Creating Local (Spatio-Temporal) Neighbourhoods
 This function calculates local spatial or spatio-temporal neighbourhoods to be used for fitting of spatial/spatio-temporal vine copulas and for prediction using spatial/spatio-temporal vine copulas. Spatial neighbourhoods are derived from \code{\link[sf]{sf}} objects, spatio-temporal ones from \code{stars} vector data cubes.
 }
 \usage{
-neighbours(data, target = NULL, size = NULL, var = NULL, coVar = character(),
-           prediction = !is.null(target), min.dist = 0.01,
-           tlags = -(0:2), timeSteps = NA, timeCol = "time")
+neighbours(data, target = NULL, size = NULL, var = NULL, covar = character(),
+           prediction = !is.null(target), min_dist = 0.01,
+           tlags = -(0:2), time_steps = NA, time_col = "time", ...)
 }
 \arguments{
   \item{data}{
@@ -20,16 +20,17 @@ Spatio-temporal case: a \code{\link[stars]{st_as_stars}} vector data cube with e
   \item{target}{
 the prediction targets, \code{NULL} (default) if the neighbourhood is used for fitting.
 Spatial case: an \code{\link[sf]{sf}} or \code{sfc} object with POINT geometries defining the prediction locations.
-Spatio-temporal case: either a \code{stars} vector data cube as \code{data} (all combinations of its locations and time instances are used; the neighbourhoods are ordered by location first and by time within each location) or an \code{\link[sf]{sf}} object with POINT geometries holding one time stamp per feature in the column \code{timeCol}. All target time instances need to be part of the time dimension of \code{data}.
+Spatio-temporal case: either a \code{stars} vector data cube as \code{data} (all combinations of its locations and time instances are used; the neighbourhoods are ordered by location first and by time within each location) or an \code{\link[sf]{sf}} object with POINT geometries holding one time stamp per feature in the column \code{time_col}. All target time instances need to be part of the time dimension of \code{data}.
 }
   \item{size}{The (spatial) size of the neighbourhood including the location of interest (for fitting as well for prediction). Defaults to 5 in the spatial and to 4 in the spatio-temporal case. In the spatio-temporal case, each of the \code{size - 1} spatial neighbours is used at every temporal lag in \code{tlags}.}
   \item{var}{the variable name of interest, by default (\code{NULL}) the first attribute (non-geometry) column of \code{data} is used}
-  \item{coVar}{the name of the covariate, if any. Its values at the central location are added as last data column(s): taken from \code{data} for fitting and from \code{target} for prediction (the target then needs to be an \code{sf} object or \code{stars} cube holding the covariate).}
+  \item{covar}{the name of the covariate, if any. Its values at the central location are added as last data column(s): taken from \code{data} for fitting and from \code{target} for prediction (the target then needs to be an \code{sf} object or \code{stars} cube holding the covariate).}
   \item{prediction}{whether the neighbourhood should be used for prediction (TRUE) or spatial/spatio-temporal vine copula fitting; defaults to \code{TRUE} if \code{target} is provided.}
-  \item{min.dist}{the minimal distance for a location to be included. Must be larger than 0 for fitting purposes and might be 0 for prediction}
+  \item{min_dist}{the minimal distance for a location to be included. Must be larger than 0 for fitting purposes and might be 0 for prediction}
   \item{tlags}{spatio-temporal case only: the temporal lags to be used in the spatio-temporal neighbourhood.}
-  \item{timeSteps}{spatio-temporal case only: the number of time instances that should randomly be selected from \code{data}. The default, \code{NA}, selects all time instances.}
-  \item{timeCol}{spatio-temporal case only: the name of the time column if \code{target} is an \code{sf} object (ignored for \code{sftime} objects, whose time column is used).}
+  \item{time_steps}{spatio-temporal case only: the number of time instances that should randomly be selected from \code{data}. The default, \code{NA}, selects all time instances.}
+  \item{time_col}{spatio-temporal case only: the name of the time column if \code{target} is an \code{sf} object (ignored for \code{sftime} objects, whose time column is used).}
+  \item{\dots}{deprecated argument names of \pkg{spcopula} (\code{coVar}, \code{min.dist}, \code{timeSteps}, \code{timeCol}, \code{spSize}) are accepted with a warning.}
 }
 \details{
 Distances are Euclidean distances in the units of the coordinate reference system for projected (or unknown) CRS. For geographic (longitude/latitude) coordinates, great circle distances in metres are calculated via \code{\link[sf]{st_distance}}. Temporal lags are counted in steps of the time dimension of \code{data}.

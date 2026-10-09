@@ -1,4 +1,4 @@
-genEmpKenFun <- function(copula, sample=NULL) {
+gen_emp_ken_fun <- function(copula, sample=NULL) {
   if(is.null(sample)) 
     sample <- rCopula(1e6,copula)
   if(missing(copula)) {
@@ -23,11 +23,11 @@ genEmpKenFun <- function(copula, sample=NULL) {
 # <=> K_C(t) = 1 - \mu /KRP
 # <=> t = K_C^{-1}(1 - \mu /KRP)
 
-genInvKenFun <- function(kenFun, tol=.Machine$double.eps^.5) {
+gen_inv_ken_fun <- function(ken_fun, tol=.Machine$double.eps^.5) {
   invKenFun <- function(k){
     res <- NULL
     for(i in 1:length(k)) {
-      res <- c(res, optimize(function(x) (kenFun(x)-k[i])^2, c(0,1), tol=tol)$minimum)
+      res <- c(res, optimize(function(x) (ken_fun(x)-k[i])^2, c(0,1), tol=tol)$minimum)
     }
     return(res)
   }
@@ -35,28 +35,28 @@ genInvKenFun <- function(kenFun, tol=.Machine$double.eps^.5) {
 }
 
 ## return periods
-kendallRP <- function(kendallFun, cl=c(.99,.999), mu=1, copula) {
-  if(missing(kendallFun) & missing(copula)) 
+kendall_rp <- function(kendall_fun, cl=c(.99,.999), mu=1, copula) {
+  if(missing(kendall_fun) & missing(copula)) 
       stop("Either the kendall distribution function or the copula must be provided. Note that the calculation of the kendall distribution function from the copula is pretty time consuming. Saving them separately might be advantageous.")
-  if(missing(kendallFun)) kendallFun <- genEmpKenFun(copula)
+  if(missing(kendall_fun)) kendall_fun <- gen_emp_ken_fun(copula)
   if(length(mu)>1 & length(cl) > 1) stop("Either the critial level (cl) or mu may be of length larger than 1!")
-  return(mu/(1-kendallFun(cl)))
+  return(mu/(1-kendall_fun(cl)))
 }   
 
-criticalLevel <- function(kendallFun, KRP=c(100,1000), mu=1, copula) {
-  if(missing(kendallFun) & missing(copula)) 
+critical_level <- function(kendall_fun, krp=c(100,1000), mu=1, copula) {
+  if(missing(kendall_fun) & missing(copula)) 
       stop("Either the kendall distribution function or the copula must be provided. Note that the calculation of the kendall distribution function from the copula is pretty time consuming. Saving them separately might be advantageous.")
-  if(missing(kendallFun))
-      kendallFun <- genEmpKenFun(copula)
-  if(length(mu)>1 & length(KRP) > 1) 
+  if(missing(kendall_fun))
+      kendall_fun <- gen_emp_ken_fun(copula)
+  if(length(mu)>1 & length(krp) > 1) 
       stop("Either the kendall return period or mu may be of length larger than 1!")
-  invKenFun <- genInvKenFun(kendallFun)
-  return(invKenFun(1-mu/KRP))
+  invKenFun <- gen_inv_ken_fun(kendall_fun)
+  return(invKenFun(1-mu/krp))
 }
 
 ## next: calculating critical layer, sampling from the layer, selecting "typical" points
 # calculate critical layer (ONLY 2D by now)
-criticalPair <- function(copula, cl, u, ind, tol=sqrt(.Machine$double.eps)) {
+critical_pair <- function(copula, cl, u, ind, tol=sqrt(.Machine$double.eps)) {
   
   optimFun <- function(x, u, ind) {
     pair <- cbind(x,x)
@@ -77,7 +77,7 @@ criticalPair <- function(copula, cl, u, ind, tol=sqrt(.Machine$double.eps)) {
 
 
 # calculate critical layer (ONLY 3D by now)
-criticalTriple <- function(copula, cl, u, ind, tol=sqrt(.Machine$double.eps)) {
+critical_triple <- function(copula, cl, u, ind, tol=sqrt(.Machine$double.eps)) {
   if(!is.matrix(u)) u <- matrix(u,ncol=2)
     
   optimFun <- function(x, u, ind) {
@@ -181,7 +181,7 @@ kendall <- function(t, copula) {
 }
 
 # empirical default
-getKendallDistr <- function(copula, sample=NULL) {
+get_kendall_distr <- function(copula, sample=NULL) {
 #   standardGeneric("getKendallDistr")
   if(is.null(sample))
     sample <- rCopula(1e6, copula)
@@ -198,15 +198,15 @@ getKendallDistr <- function(copula, sample=NULL) {
   return(empKenFun)
 }
 
-setGeneric("getKendallDistr")
+setGeneric("get_kendall_distr")
 
 ## 
 
-kendallDistribution <- function(copula, t) {
-  stop("There is no analytical expression implemented for this copula family. See 'getKendallDistr' for a numerical solution instead.")
+kendall_distribution <- function(copula, t) {
+  stop("There is no analytical expression implemented for this copula family. See 'get_kendall_distr' for a numerical solution instead.")
 }
 
-setGeneric("kendallDistribution")
+setGeneric("kendall_distribution")
 
 ## Clayton
 ## kendall distribution/measure, taken from VineCopula:::obs.stat
@@ -220,10 +220,10 @@ kendall.Clayton <- function(copula, t){
   return(kt)  
 }
 
-setMethod("kendallDistribution", signature("claytonCopula"), kendall.Clayton) # for easy backwards compatibility
+setMethod("kendall_distribution", signature("claytonCopula"), kendall.Clayton) # for easy backwards compatibility
 setMethod("kendall", signature("numeric", "claytonCopula"), function(t, copula) kendall.Clayton(copula, t))
 
-setMethod("getKendallDistr", signature("claytonCopula"), 
+setMethod("get_kendall_distr", signature("claytonCopula"), 
           function(copula) return(function(t) kendall.Clayton(copula, t)))
 
 ## Gumbel
@@ -238,10 +238,10 @@ kendall.Gumbel <- function(copula, t){
   return(kt)  
 }
 
-setMethod("kendallDistribution", signature("gumbelCopula"), kendall.Gumbel) # for easy backwards compatibility
+setMethod("kendall_distribution", signature("gumbelCopula"), kendall.Gumbel) # for easy backwards compatibility
 setMethod("kendall", signature("numeric","gumbelCopula"), function(t, copula) kendall.Gumbel(copula, t)) 
 
-setMethod("getKendallDistr", signature("gumbelCopula"), 
+setMethod("get_kendall_distr", signature("gumbelCopula"), 
           function(copula) return(function(t) kendall.Gumbel(copula, t)))
 
 ## Frank
@@ -256,10 +256,10 @@ kendall.Frank <- function(copula, t){
   return(kt)  
 }
 
-setMethod("kendallDistribution", signature("frankCopula"), kendall.Frank) # for easy backwards compatibility
+setMethod("kendall_distribution", signature("frankCopula"), kendall.Frank) # for easy backwards compatibility
 setMethod("kendall", signature("numeric", "frankCopula"),  function(t, copula) kendall.Frank)
 
-setMethod("getKendallDistr", signature("frankCopula"), 
+setMethod("get_kendall_distr", signature("frankCopula"), 
           function(copula) return(function(t) kendall.Frank(copula, t)))
 
 ## direct definition for Archimedean copulas
@@ -277,14 +277,14 @@ kendall.BB1 <- function(copula, t){
   return(kt)  
 }
 
-setMethod("kendallDistribution", signature("BB1Copula"), kendall.BB1)
+setMethod("kendall_distribution", signature("BB1Copula"), kendall.BB1)
 setMethod("kendall", signature("numeric", "BB1Copula"), 
           function(t, copula) {
             stopifnot(copula@dimension <= 2) 
             kendall.BB1(copula, t)
           })
 
-setMethod("getKendallDistr", signature("BB1Copula"), function(copula) return(function(t) kendall.BB1(copula, t)) )
+setMethod("get_kendall_distr", signature("BB1Copula"), function(copula) return(function(t) kendall.BB1(copula, t)) )
 
 
 # BB6
@@ -300,14 +300,14 @@ kendall.BB6 <- function(copula, t){
   return(kt)  
 }
 
-setMethod("kendallDistribution", signature("BB6Copula"), kendall.BB6) # for easy backwards compatibility
+setMethod("kendall_distribution", signature("BB6Copula"), kendall.BB6) # for easy backwards compatibility
 setMethod("kendall", signature("numeric", "BB6Copula"), 
           function(t, copula) {
             stopifnot(copula@dimension <= 2) 
             kendall.BB6(copula, t)
           })
 
-setMethod("getKendallDistr", signature("BB6Copula"), 
+setMethod("get_kendall_distr", signature("BB6Copula"), 
           function(copula) return(function(t) kendall.BB6(copula, t)))
 
 # BB7
@@ -324,14 +324,14 @@ kendall.BB7 <- function(copula, t){
   return(kt)  
 }
 
-setMethod("kendallDistribution", signature("BB7Copula"), kendall.BB7)
+setMethod("kendall_distribution", signature("BB7Copula"), kendall.BB7)
 setMethod("kendall", signature("numeric", "BB7Copula"), 
           function(t, copula) {
             stopifnot(copula@dimension <= 2) 
             kendall.BB7(copula, t)
           })
 
-setMethod("getKendallDistr", signature("BB7Copula"), 
+setMethod("get_kendall_distr", signature("BB7Copula"), 
           function(copula) return(function(t) kendall.BB7(copula, t)))
 
 # BB8
@@ -347,14 +347,14 @@ kendall.BB8 <- function(copula, t){
   return(kt)  
 }
 
-setMethod("kendallDistribution", signature("BB8Copula"), kendall.BB8) # for easy backwards compatibility
+setMethod("kendall_distribution", signature("BB8Copula"), kendall.BB8) # for easy backwards compatibility
 setMethod("kendall", signature("numeric", "BB8Copula"), 
           function(t, copula) {
             stopifnot(copula@dimension <= 2) 
             kendall.BB8(copula, t)
           })
 
-setMethod("getKendallDistr", signature("BB8Copula"), 
+setMethod("get_kendall_distr", signature("BB8Copula"), 
           function(copula) return(function(t) kendall.BB8(copula, t)))
 
 # BiJoe
@@ -371,8 +371,8 @@ kendall.Joe <- function(copula, t) kdJoe(t, copula)
 #   return(kt)  
 # }
 
-setMethod("kendallDistribution", signature("joeBiCopula"), kendall.Joe)
+setMethod("kendall_distribution", signature("joeBiCopula"), kendall.Joe)
 
-setMethod("getKendallDistr", signature("joeBiCopula"), 
+setMethod("get_kendall_distr", signature("joeBiCopula"), 
           function(copula) return(function(t) kendall.Joe(copula, t)))
 

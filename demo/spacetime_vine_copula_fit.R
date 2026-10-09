@@ -18,14 +18,14 @@ set.seed(2005)
 stBins <- calc_bins(EU_RB_2005, "rtPM10", nbins=40, tlags=-(0:2),
                    instances=10)
 
-stDepFun <- fit_cor_fun(stBins, c(3,3,3), tlags=-(0:2))
+dep_fun <- fit_cor_fun(stBins, c(3,3,3), tlags=-(0:2))
 
-# parameters are re-calibrated by stDepFun; avoid boundary values that
+# parameters are re-calibrated by dep_fun; avoid boundary values that
 # would turn Clayton/Gumbel into independence copulas
 families <- c(normalCopula(0.5), tCopula(0.5), claytonCopula(1), 
               frankCopula(1), gumbelCopula(1.5), joeBiCopula(1.5))
 
-loglikTau <- loglik_by_lags(stBins, EU_RB_2005, families, stDepFun)
+loglikTau <- loglik_by_lags(stBins, EU_RB_2005, families, dep_fun)
 
 bestFitTau <- lapply(loglikTau, 
                      function(x) apply(apply(x$loglik, 1, rank), 2, which.max))
@@ -36,15 +36,15 @@ listDists <- rep(list(stBins$meanDists[1:35]), 3)
 
 # build the spatio-temporal copula
 stConvCop <- spacetime_copula(components=listCops, distances=listDists,
-                      tlags=-(0:2), stDepFun=stDepFun)
+                      tlags=-(0:2), dep_fun=dep_fun)
 
 # get the neighbours
-stNeigh <- neighbours(EU_RB_2005, var="rtPM10", size=4, 
-                           tlags=-(0:2), timeSteps=10, min.dist=10)
+neigh <- neighbours(EU_RB_2005, var="rtPM10", size=4, 
+                           tlags=-(0:2), time_steps=10, min_dist=10)
 # drop neighbourhoods with missing values
-stNeigh <- stNeigh[which(complete.cases(stNeigh@data))]
+neigh <- neigh[which(complete.cases(neigh@data))]
 
-stVineFit <- fitCopula(distance_vine_copula(stConvCop, vineCopula(9L)), stNeigh,
+stVineFit <- fitCopula(distance_vine_copula(stConvCop, vineCopula(9L)), neigh,
                        method=list(indeptest=TRUE))
 stVine <- stVineFit@copula
 
@@ -54,7 +54,7 @@ stVineFit@loglik
 ## predict the median for two stations on three days (cross-validation style)
 target <- EU_RB_2005["rtPM10", 1:2, 100:102]
 predNeigh <- neighbours(EU_RB_2005, target, var="rtPM10", size=4,
-                             tlags=-(0:2), prediction=TRUE, min.dist=10)
+                             tlags=-(0:2), prediction=TRUE, min_dist=10)
 pred <- predict(stVine, predNeigh, EU_RB_2005, target,
                      margin=list(q=function(p) p), method="quantile")
 cbind(observed=as.vector(t(target[["rtPM10"]])),

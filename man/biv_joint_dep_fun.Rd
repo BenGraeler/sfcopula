@@ -1,11 +1,11 @@
-\name{bivJointDepFun}
-\alias{bivJointDepFun}
-\alias{lowerBivJointDepFun}
-\alias{upperBivJointDepFun}
+\name{biv_joint_dep_fun}
+\alias{biv_joint_dep_fun}
+\alias{lower_biv_joint_dep_fun}
+\alias{upper_biv_joint_dep_fun}
 
-\alias{empBivJointDepFun}
-\alias{lowerEmpBivJointDepFun}
-\alias{upperEmpBivJointDepFun}
+\alias{emp_biv_joint_dep_fun}
+\alias{lower_emp_biv_joint_dep_fun}
+\alias{upper_emp_biv_joint_dep_fun}
 
 \title{
 Bivariate joint dependence functions
@@ -22,13 +22,13 @@ upper joint dependence (exceedance):
 Taking the limits of the above for \eqn{u \rightarrow 0}{u -> 0} and \eqn{u \rightarrow 1}{u -> 1} respectively yields the lower and upper tail dependence index. For tail dependence of multivariate copulas, see the papers by Joe et al. (2010) and Nikoloulopoulos et al. (2012).
 }
 \usage{
-bivJointDepFun(copula)
-lowerBivJointDepFun(copula)
-upperBivJointDepFun(copula)
+biv_joint_dep_fun(copula)
+lower_biv_joint_dep_fun(copula)
+upper_biv_joint_dep_fun(copula)
 
-empBivJointDepFun(u)
-lowerEmpBivJointDepFun(u)
-upperEmpBivJointDepFun(u)
+emp_biv_joint_dep_fun(u)
+lower_emp_biv_joint_dep_fun(u)
+upper_emp_biv_joint_dep_fun(u)
 }
 
 \arguments{
@@ -64,9 +64,9 @@ Benedikt Graeler
 
 \examples{
 data("simulatedTriples")
-X <- rankTransform(triples[,c(1,3)])
+X <- rank_transform(triples[,c(1,3)])
   
-tdfEmp <- empBivJointDepFun(X)
+tdfEmp <- emp_biv_joint_dep_fun(X)
 plot(tdfEmp,ylim=c(0,1),
      ylab="tail dependence index")  
 abline(v=0.5, col="grey")
@@ -74,15 +74,15 @@ abline(v=0.5, col="grey")
 smplTau <- cor(X,method="kendall")[1,2]
 
 # Gauss
-tdfGauss <- bivJointDepFun(normalCopula(sin(smplTau*pi/2)))
+tdfGauss <- biv_joint_dep_fun(normalCopula(sin(smplTau*pi/2)))
 curve(tdfGauss,add=TRUE,col="blue")
 
 # survival Gumbel
-tdfGumbel <- bivJointDepFun(surGumbelCopula(1/(1-smplTau)))
+tdfGumbel <- biv_joint_dep_fun(surGumbelCopula(1/(1-smplTau)))
 curve(tdfGumbel,add=TRUE,col="darkgreen")
 
 # survival BB6 copula
-tdfBB6 <- bivJointDepFun(surBB6Copula(c(4.65,2.28)))
+tdfBB6 <- biv_joint_dep_fun(surBB6Copula(c(4.65,2.28)))
 curve(tdfBB6,add=TRUE,col="red")
 
 legend("bottomleft",c("empircal","Gauss","surv. Gumbel","surv. BB6"),

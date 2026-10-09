@@ -2,7 +2,7 @@
 
 
 # ranks are automatically removed and NAs are by default randomly distributed
-rankTransform <- function(u,v=NULL, na.last=TRUE, ties.method="average") {
+rank_transform <- function(u,v=NULL, na.last=TRUE, ties.method="average") {
   if(!(is.matrix(u) | is.data.frame(u))) {
     if (is.null(v))
       stop("u must either be a matrix with at least 2 columns or u and v must be given.")
@@ -17,7 +17,7 @@ rankTransform <- function(u,v=NULL, na.last=TRUE, ties.method="average") {
 }
 
 ##
-dependencePlot <- function(var=NULL, smpl, bandwidth=0.075, 
+dependence_plot <- function(var=NULL, smpl, bandwidth=0.075, 
                            main="Strength of dependence", 
                            transformation=function (x) x, margin=NULL, ...) {
   if(is.null(var)) {
@@ -38,7 +38,7 @@ dependencePlot <- function(var=NULL, smpl, bandwidth=0.075,
 }
 
 ##
-unitScatter <- function(var=NULL, smpl, ...) {
+unit_scatter <- function(var=NULL, smpl, ...) {
   
   if(is.null(var)) {
     if (ncol(smpl)>2) {
@@ -56,9 +56,4 @@ unitScatter <- function(var=NULL, smpl, ...) {
   }
 
   plot(smpl, asp=1, xlim=c(0,1), ylim=c(0,1), ...)
-}
-
-univScatter <- function(formula=NULL, smpl) {
-  .Deprecated("unitScatter")
-  unitScatter(formula, smpl)
 }

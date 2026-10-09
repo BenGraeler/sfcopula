@@ -11,10 +11,10 @@ Conditions a spatial or spatio-temporal vine copula for conditional prediction
 A spatial or spatio-temporal vine copula is conditioned under the observations of all but one neighbour generating a conditional univariate distribution used for prediction.
 }
 \usage{
-cond_vine(condVar, dists, vine, n = 1000, ...)
+cond_vine(cond_var, dists, vine, n = 1000, ...)
 }
 \arguments{
-  \item{condVar}{
+  \item{cond_var}{
 the conditioning variables, i.e. the (uniform) data of the neighbours. For a \code{\linkS4class{covariate_vine_copula}}, the neighbours are followed by the covariate at the central location, i.e. the order of the columns of a \code{\linkS4class{neighbourhood}} (\pkg{spcopula}'s \code{condStCoVarVine} expected the covariate first).
 }
   \item{dists}{
@@ -26,7 +26,7 @@ the vine copula, either a \code{\linkS4class{distance_vine_copula}} or a \code{\
   \item{n}{
 a proxy to the number of intervals to be used in the numerical integration. The intervals will not be split uniform with shorter intervals at the corners of the copula.
 }
-  \item{\dots}{further arguments of the methods: the \code{\linkS4class{covariate_vine_copula}} method needs \code{centre}, the index of the central location passed to the covariate copula function (\code{coVarCop}) of the vine: the location index for a spatial tree, the pair (location, time) for a spatio-temporal tree.}
+  \item{\dots}{further arguments of the methods: the \code{\linkS4class{covariate_vine_copula}} method needs \code{centre}, the index of the central location passed to the covariate copula function (\code{covar_cop}) of the vine: the location index for a spatial tree, the pair (location, time) for a spatio-temporal tree.}
 }
 \section{Methods}{
 \describe{
@@ -57,17 +57,17 @@ spCop <- spatial_copula(components=list(normalCopula(0.2), tCopula(0.2, dispstr 
                                   claytonCopula(0.2), claytonCopula(0.2), claytonCopula(0.2),
                                   claytonCopula(0.2), indepCopula()),
                   distances=c(0, bins$meanDists[1:9]),
-                  spDepFun=calcKTauPol, unit="m")
+                  dep_fun=calcKTauPol, unit="m")
 
 spVineCop <- distance_vine_copula(spCop, vineCopula(4L))
 
 dists <- list(c(473, 124, 116, 649))
-condVar <- c(0.29, 0.55, 0.05, 0.41)
-condDensity <- cond_vine(condVar, dists, spVineCop)
+cond_var <- c(0.29, 0.55, 0.05, 0.41)
+condDensity <- cond_vine(cond_var, dists, spVineCop)
 
 curve(condDensity)
 mtext(paste("Dists:",paste(round(dists[[1]],0),collapse=", ")),line=0)
-mtext(paste("Cond.:",paste(round(condVar,2),collapse=", ")),line=1)
+mtext(paste("Cond.:",paste(round(cond_var,2),collapse=", ")),line=1)
 
 ## spatio-temporal vine copula
 spCopT0 <- spatial_copula(components=list(claytonCopula(8), claytonCopula(4), 
@@ -89,7 +89,7 @@ stVineCop <- distance_vine_copula(stCop, vineCopula(4L))
 
 dists <- array(c(150, 250, 150, 250,0,0,-1,-1),dim=c(1,4,2))
 
-condDensity <- cond_vine(condVar, list(dists), stVineCop)
+condDensity <- cond_vine(cond_var, list(dists), stVineCop)
 curve(condDensity)
 
 ## spatio-temporal covariate vine copula
@@ -100,9 +100,9 @@ stCop3 <- spacetime_copula(components=list(spCopT0, spCopT1, spCopT2),
 stCVVC <- covariate_vine_copula(function(x) gumbelCopula(7), stCop3, vineCopula(5L))
 
 # the neighbours followed by the covariate
-condVar <- c(0.29, 0.55, 0.05, 0.41, 0.95)
+cond_var <- c(0.29, 0.55, 0.05, 0.41, 0.95)
 
-condDensity <- cond_vine(condVar, dists, stCVVC, centre = c(1,1))
+condDensity <- cond_vine(cond_var, dists, stCVVC, centre = c(1,1))
 curve(condDensity)
 }
 

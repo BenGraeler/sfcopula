@@ -4,26 +4,26 @@
 ##########################################################
 
 # constructor
-distance_vine_copula <- function(trees, topCop=NULL) {
+distance_vine_copula <- function(trees, top_cop=NULL) {
   if(!is.list(trees))
     trees <- list(trees)
 
   isSt <- all(sapply(trees, is, "spacetime_copula"))
   kind <- if (isSt) "Spatio-temporal" else "Spatial"
 
-  if(is.null(topCop)) {
+  if(is.null(top_cop)) {
     dim <- length(trees) + 1
     fullname <- paste(kind, "vine copula family with only",
                       ifelse(isSt, "spatio-temporal", "spatial"), "tree(s).")
   } else {
-    dim <- topCop@dimension + length(trees)
+    dim <- top_cop@dimension + length(trees)
     fullname <- paste(kind, "vine copula family with", length(trees),
                       ifelse(isSt, "spatio-temporal", "spatial"), "tree(s).")
   }
 
   new("distance_vine_copula", dimension = as.integer(dim),
       parameters=numeric(), param.names = character(), param.lowbnd = numeric(),
-      param.upbnd = numeric(), fullname = fullname, trees=trees, topCop=topCop)
+      param.upbnd = numeric(), fullname = fullname, trees=trees, topCop=top_cop)
 }
 
 # show
@@ -117,15 +117,15 @@ setMethod("dCopula", signature=signature("data.frame","distance_vine_copula"),
 # returns a list with the distances of each tree; the first tree uses the
 # distances stored in the neighbourhood, higher trees the distances between
 # the neighbours of the previous tree
-tree_dists <- function(neigh, data, n.trees) {
+tree_dists <- function(neigh, data, n_trees) {
   stopifnot(is(neigh, "neighbourhood"))
   condDists <- list(neigh@distances)
-  if(n.trees==1)
+  if(n_trees==1)
     return(condDists)
 
   geom <- .pointGeom(data)
   nNeighs <- dim(neigh@distances)[2]
-  for (tree in 1:(n.trees-1)) {
+  for (tree in 1:(n_trees-1)) {
     condDists[[tree+1]] <- .nextTreeDists(neigh@index, geom, tree, nNeighs - tree)
   }
   return(condDists)
@@ -215,7 +215,7 @@ fitDistanceVine <- function(copula, data,
 
   nTrees <- length(copula@trees)
   if (nTrees > 1 && is.null(dataLocs))
-    stop("Fitting more than one distance tree needs the data locations: data = list(neigh, dataLocs).")
+    stop("Fitting more than one distance tree needs the data locations: data = list(neigh, data locations).")
 
   dists <- if (nTrees > 1) tree_dists(neigh, dataLocs, nTrees) else list(neigh@distances)
 
@@ -230,24 +230,22 @@ fitDistanceVine <- function(copula, data,
 
   if (ncol(u0)==1) {
     cat("[No copula to be estimated at the top.]\n")
-    topCop <- NULL
+    top_cop <- NULL
     loglik <- 0
   } else if (ncol(u0)==2) {
     cat("[Estimating a single bivariate copula at the top.]\n")
     bivCop <- BiCopSelect(u0[,1],u0[,2])
-    topCop <- copulaFromFamilyIndex(bivCop$family, bivCop$par, bivCop$par2)
-    loglik <- sum(dCopula(u0, topCop, log=TRUE))
+    top_cop <- copulaFromFamilyIndex(bivCop$family, bivCop$par, bivCop$par2)
+    loglik <- sum(dCopula(u0, top_cop, log=TRUE))
   } else {
     cat("[Estimating a",ncol(u0),"dimensional copula at the top.]\n")
-    topCop <- copula@topCop
-    if (is.null(topCop))
-      topCop <- vineCopula(as.integer(ncol(u0)))
-    vineCopFit <- fitCopula(topCop, u0, method)
-    topCop <- vineCopFit@copula
+    top_cop <- copula@topCop
+    vineCopFit <- fitCopula(top_cop, u0, method)
+    top_cop <- vineCopFit@copula
     loglik <- vineCopFit@loglik
   }
 
-  vineCop <- distance_vine_copula(copula@trees, topCop)
+  vineCop <- distance_vine_copula(copula@trees, top_cop)
 
   return(new("fitCopula", estimate = vineCop@parameters, var.est = matrix(NA),
              method = paste(sapply(method, paste, collapse=", "), collapse="; "),
@@ -261,7 +259,7 @@ setMethod("fitCopula", signature=signature("distance_vine_copula"), fitDistanceV
 ## conditional density of the central location
 ################################################
 
-setGeneric("cond_vine", function(condVar, dists, vine, n = 1000, ...) standardGeneric("cond_vine"))
+setGeneric("cond_vine", function(cond_var, dists, vine, n = 1000, ...) standardGeneric("cond_vine"))
 
 # evaluation grid with some points in the tails
 .condGrid <- function(n) {
@@ -284,13 +282,15 @@ setGeneric("cond_vine", function(condVar, dists, vine, n = 1000, ...) standardGe
   return(condVineFun)
 }
 
-condDistanceVine <- function (condVar, dists, vine, n = 1000, ...) {
+condDistanceVine <- function (cond_var, dists, vine, n = 1000, ...) {
+  if (missing(cond_var))
+    cond_var <- .dotsArg(list(...), "condVar", "cond_var", NULL)
   if (!is.list(dists))
     dists <- list(dists)
   stopifnot(length(vine@trees)==length(dists))
 
   xVals <- .condGrid(n)
-  repCondVar <- matrix(condVar, ncol = length(condVar), nrow = length(xVals), byrow = T)
+  repCondVar <- matrix(cond_var, ncol = length(cond_var), nrow = length(xVals), byrow = T)
   density <- dDistanceVine(cbind(xVals, repCondVar), vine, h = dists)
 
   .condDensityFun(xVals, density)

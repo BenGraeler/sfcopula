@@ -5,15 +5,16 @@ Constructor of the \code{\linkS4class{neighbourhood}} class
 }
 \description{An object that stores the nearest k (spatial or spatio-temporal) neighbours for a set of locations.}
 
-\usage{neighbourhood(data, distances, index, var, coVar = character(), prediction = FALSE)}
+\usage{neighbourhood(data, distances, index, var, covar = character(), prediction = FALSE, ...)}
 
 \arguments{
   \item{data}{A data.frame (or matrix) that contains the variables of interest for each local neighbourhood.}
   \item{distances}{Spatial neighbourhoods: a matrix \code{[n, k]} with all the separating distances per local neighbourhood. Spatio-temporal neighbourhoods: a 3-dimensional array \code{[n, k, 2]} with all the separating spatial (\code{[,,1]}) and temporal (\code{[,,2]}) distances per local neighbourhood.}
   \item{index}{Spatial neighbourhoods: a matrix \code{[n, k+1]} pointing from each neighbourhood to the corresponding row indices of the underlying \code{\link[sf]{sf}} object. Spatio-temporal neighbourhoods: a 3-dimensional array \code{[n, k+1, 2]} pointing from each neighbourhood to the corresponding indices of the geometry (\code{[,,1]}) and time (\code{[,,2]}) dimension of the underlying vector data cube.}
   \item{var}{The variable's name.}
-  \item{coVar}{The covariate's name, if any.}
+  \item{covar}{The covariate's name, if any.}
   \item{prediction}{whether this neighbourhood is intended to be used for prediction or fitting purpose.}
+  \item{\dots}{deprecated argument names of \pkg{spcopula} (\code{coVar}) are accepted with a warning.}
 }
 
 \details{
@@ -50,12 +51,12 @@ time <- as.Date("2014-03-18") + 0:2
 stData <- st_as_stars(list(var1 = matrix(runif(6), 2, 3)),
                       dimensions = st_dimensions(geometry = pts, time = time))
 
-stNeigh <- neighbours(stData, size=2, tlags=-(0:1))
-stNeigh
+neigh <- neighbours(stData, size=2, tlags=-(0:1))
+neigh
 
 # rebuilding stNeigh
-neighbourhood(stNeigh@data, stNeigh@distances, stNeigh@index, stNeigh@var,
-              stNeigh@coVar, stNeigh@prediction)
+neighbourhood(neigh@data, neigh@distances, neigh@index, neigh@var,
+              neigh@coVar, neigh@prediction)
 }
 
 \keyword{spatial}

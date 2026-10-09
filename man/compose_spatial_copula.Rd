@@ -7,10 +7,10 @@ Composing a bivariate Spatial Copula
 A bivariate spatial copula is composed out of a set of bivariate copulas. These are combined using a convex linear combination with weights based on distances where for copulas with a 1-1 correspondence of Kendall's tau or Spearman's rho a dependence function providing measures of association based on distances might be used.
 }
 \usage{
-compose_spatial_copula(bestFit, families, bins, calcCor, range=max(bins$meanDists))
+compose_spatial_copula(best_fit, families, bins, calc_cor, range=max(bins$meanDists), ...)
 }
 \arguments{
-  \item{bestFit}{
+  \item{best_fit}{
 A vector indicating the best fitting copula family index (as in \code{families}) per lag-class. If this vector is shorter than the actual number of bins, only these first bins will be used. It is an alternative way of setting a range.
 }
   \item{families}{
@@ -19,12 +19,13 @@ The list of investigated families.
   \item{bins}{
 The spatial bins used.
 }
-  \item{calcCor}{
+  \item{calc_cor}{
 Optional, some spatially dependent function providing values of Kendall's tau for distances.
 }
   \item{range}{
   The maximal distance to be used for the spatial copula. By default, the maximum distance provided by bins will be used. 
   }
+  \item{\dots}{deprecated argument names of \pkg{spcopula} (\code{bestFit}, \code{calcCor}) are accepted with a warning.}
 }
 \value{
 A (\code{\linkS4class{spatial_copula}}) object.

@@ -7,12 +7,13 @@ Calculating the conditional (spatio-temporal) distances
 \description{
 All distances of all involved neighbours are calculated according to multiple spatial or spatio-temporal trees forming a C-Vine.
 }
-\usage{tree_dists(neigh, data, n.trees)}
+\usage{tree_dists(neigh, data, n_trees, ...)}
 
 \arguments{
   \item{neigh}{the initial \code{\linkS4class{neighbourhood}}}
   \item{data}{the initial data locations (the same as used to generate \code{neigh}): an \code{\link[sf]{sf}} or \code{sfc} object with POINT geometries in the spatial case, the \code{stars} vector data cube or its \code{sfc} geometries in the spatio-temporal case.}
-  \item{n.trees}{the number of distance dependent trees}
+  \item{n_trees}{the number of distance dependent trees}
+  \item{\dots}{deprecated argument names of \pkg{spcopula} (\code{n.trees}, \code{dataLocs}) are accepted with a warning.}
 }
 
 \value{

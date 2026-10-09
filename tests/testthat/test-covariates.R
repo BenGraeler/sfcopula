@@ -1,7 +1,7 @@
 test_that("spatial neighbourhoods carry covariates from the data or the target", {
   meuse <- meuseZinc()
   meuse$marCopper <- rank(meuse$copper) / (nrow(meuse) + 1)
-  nb <- neighbours(meuse, var = "marZinc", coVar = "marCopper", size = 4)
+  nb <- neighbours(meuse, var = "marZinc", covar = "marCopper", size = 4)
   expect_equal(dim(nb@data), c(155, 5))
   expect_equal(nb@data[[5]], meuse$marCopper)
   expect_equal(colnames(nb@data)[5], "N0.marCopper")
@@ -9,10 +9,10 @@ test_that("spatial neighbourhoods carry covariates from the data or the target",
   # prediction: the covariate is taken from the target locations
   target <- meuse[150:155, ]
   target$marCopper <- seq(0.1, 0.6, by = 0.1)
-  pn <- neighbours(meuse[1:149, ], target, var = "marZinc", coVar = "marCopper", size = 4)
+  pn <- neighbours(meuse[1:149, ], target, var = "marZinc", covar = "marCopper", size = 4)
   expect_equal(pn@data[[5]], target$marCopper)
   expect_error(neighbours(meuse[1:149, ], st_geometry(target), var = "marZinc",
-                          coVar = "marCopper", size = 4), "attributes of the target")
+                          covar = "marCopper", size = 4), "attributes of the target")
 
   # covariates are conditioned separately and not carried over to the next tree
   cv <- cond_covariate(nb, function(loc) normalCopula(0.5))
@@ -72,7 +72,7 @@ test_that("covariate vines work with a spatial tree", {
   expect_equal(cvc@dimension, 4L)
   expect_output(show(cvc), "spatial tree")
 
-  nb <- neighbours(meuse, var = "marZinc", coVar = "marCopper", size = 3)
+  nb <- neighbours(meuse, var = "marZinc", covar = "marCopper", size = 3)
   u <- as.matrix(nb@data)
 
   # the density is the product of tree, covariate and top copula densities
@@ -98,14 +98,14 @@ test_that("covariate vines work with a spatial tree", {
 
   qMar <- function(p) qlnorm(p, mean(log(meuse$zinc)), sd(log(meuse$zinc)))
   target <- meuse[150:152, ]
-  pn <- neighbours(meuse[1:149, ], target, var = "marZinc", coVar = "marCopper", size = 3)
+  pn <- neighbours(meuse[1:149, ], target, var = "marZinc", covar = "marCopper", size = 3)
   pred <- quiet(predict(fit@copula, pn, meuse[1:149, ], target, list(q = qMar)))
   expect_s3_class(pred, "sf")
   expect_true(all(pred$quantile.0.5 > 0))
   # a higher covariate shifts the prediction up (positive covariate dependence)
   high <- target
   high$marCopper <- 0.99
-  pnHigh <- neighbours(meuse[1:149, ], high, var = "marZinc", coVar = "marCopper", size = 3)
+  pnHigh <- neighbours(meuse[1:149, ], high, var = "marZinc", covar = "marCopper", size = 3)
   predHigh <- quiet(predict(fit@copula, pnHigh, meuse[1:149, ], high, list(q = qMar)))
   expect_true(all(predHigh$quantile.0.5 > pred$quantile.0.5))
 

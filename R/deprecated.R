@@ -7,12 +7,52 @@
   force(old); force(new)
   function(...) {
     .Deprecated(new, package = "sfcopula", old = old)
-    get(new, envir = asNamespace("sfcopula"))(...)
+    .quietArgs(get(new, envir = asNamespace("sfcopula"))(...))
   }
 }
 
 .deprecate <- function(old, new)
   .Deprecated(new, package = "sfcopula", old = old)
+
+## deprecated argument names (spcopula style), accepted with a warning
+
+.deprecateArg <- function(old, new)
+  .Deprecated(msg = sprintf("Argument '%s' is deprecated; use '%s' instead.", old, new))
+
+# value of a renamed argument passed through '...' (for S4 methods)
+.dotsArg <- function(dots, old, new, value) {
+  if (!old %in% names(dots))
+    return(value)
+  .deprecateArg(old, new)
+  dots[[old]]
+}
+
+# wraps f such that the old argument names in map (c(old = "new")) are accepted
+.withOldArgs <- function(f, map) {
+  force(f); force(map)
+  wrapper <- function() {
+    call <- match.call(expand.dots = TRUE)
+    argNames <- names(call)
+    isOld <- !is.na(argNames) & argNames %in% names(map)
+    for (old in argNames[isOld])
+      .deprecateArg(old, map[[old]])
+    names(call)[isOld] <- map[argNames[isOld]]
+    call[[1]] <- f
+    eval(call, parent.frame())
+  }
+  args <- formals(f)
+  if (!"..." %in% names(args))
+    args <- c(args, alist(... = ))
+  formals(wrapper) <- args
+  wrapper
+}
+
+# keeps the warnings about deprecated argument names out of the deprecated functions
+.quietArgs <- function(expr)
+  withCallingHandlers(expr, deprecatedWarning = function(w) {
+    if (startsWith(conditionMessage(w), "Argument '"))
+      invokeRestart("muffleWarning")
+  })
 
 ## copulas
 
@@ -46,16 +86,16 @@ getNeighbours <- function(dataLocs, predLocs, size = 5, var = NULL, coVar = char
                           prediction = FALSE, min.dist = 0.01) {
   .deprecate("getNeighbours", "neighbours")
   neighbours(dataLocs, if (missing(predLocs)) NULL else predLocs, size = size, var = var,
-             coVar = coVar, prediction = prediction, min.dist = min.dist)
+             covar = coVar, prediction = prediction, min_dist = min.dist)
 }
 
 getStNeighbours <- function(stData, ST, spSize = 4, tlags = -(0:2), var = names(stData)[1],
                             coVar = character(), timeSteps = NA, prediction = FALSE,
                             min.dist = 0.01, timeCol = "time") {
   .deprecate("getStNeighbours", "neighbours")
-  neighbours(stData, if (missing(ST)) NULL else ST, size = spSize, var = var, coVar = coVar,
-             prediction = prediction, min.dist = min.dist, tlags = tlags,
-             timeSteps = timeSteps, timeCol = timeCol)
+  neighbours(stData, if (missing(ST)) NULL else ST, size = spSize, var = var, covar = coVar,
+             prediction = prediction, min_dist = min.dist, tlags = tlags,
+             time_steps = timeSteps, time_col = timeCol)
 }
 
 reduceNeighbours <- .deprecatedAlias("reduceNeighbours", "reduce_neighbours")
@@ -106,3 +146,30 @@ spGaussCopPredict <- function(corFun, predNeigh, dataLocs, predLocs, margin, p =
 }
 
 spGaussLogLik <- .deprecatedAlias("spGaussLogLik", "spatial_gauss_loglik")
+
+## return periods, Kendall distribution and tail dependence
+
+kendallRP <- .deprecatedAlias("kendallRP", "kendall_rp")
+criticalLevel <- .deprecatedAlias("criticalLevel", "critical_level")
+criticalPair <- .deprecatedAlias("criticalPair", "critical_pair")
+criticalTriple <- .deprecatedAlias("criticalTriple", "critical_triple")
+kendallDistribution <- .deprecatedAlias("kendallDistribution", "kendall_distribution")
+getKendallDistr <- .deprecatedAlias("getKendallDistr", "get_kendall_distr")
+genEmpKenFun <- .deprecatedAlias("genEmpKenFun", "gen_emp_ken_fun")
+genInvKenFun <- .deprecatedAlias("genInvKenFun", "gen_inv_ken_fun")
+bivJointDepFun <- .deprecatedAlias("bivJointDepFun", "biv_joint_dep_fun")
+lowerBivJointDepFun <- .deprecatedAlias("lowerBivJointDepFun", "lower_biv_joint_dep_fun")
+upperBivJointDepFun <- .deprecatedAlias("upperBivJointDepFun", "upper_biv_joint_dep_fun")
+empBivJointDepFun <- .deprecatedAlias("empBivJointDepFun", "emp_biv_joint_dep_fun")
+lowerEmpBivJointDepFun <- .deprecatedAlias("lowerEmpBivJointDepFun", "lower_emp_biv_joint_dep_fun")
+upperEmpBivJointDepFun <- .deprecatedAlias("upperEmpBivJointDepFun", "upper_emp_biv_joint_dep_fun")
+
+## utilities
+
+rankTransform <- .deprecatedAlias("rankTransform", "rank_transform")
+dependencePlot <- .deprecatedAlias("dependencePlot", "dependence_plot")
+unitScatter <- .deprecatedAlias("unitScatter", "unit_scatter")
+univScatter <- function(formula = NULL, smpl) {
+  .deprecate("univScatter", "unit_scatter")
+  unit_scatter(formula, smpl)
+}

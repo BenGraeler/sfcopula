@@ -10,15 +10,17 @@ test_that("spatial_copula covers convex and geometric combinations", {
   expect_output(show(convex), "convex combination")
   expect_output(show(geom), "geometric mean")
 
-  # reference values of spcopula's spGeomCopula (see data-raw/spcopula_fixture.R)
+  # spcopula's spGeomCopula used swapped weights in its density; they agree only
+  # where both weights are equal (beyond the range)
   old <- suppressWarnings(readRDS(test_path("fixtures", "spcopula_objects.rds")))
-  expect_equal(dCopula(old$u, geom, h = old$h), old$expected$geom)
+  expect_equal(dCopula(old$u, geom, h = old$h)[3], old$expected$geom[3])
+  expect_false(isTRUE(all.equal(dCopula(old$u, geom, h = old$h)[1:2], old$expected$geom[1:2])))
   v <- quiet(invdduCopula(0.3, geom, y = dduCopula(c(0.3, 0.7), geom, h = 300), h = 300))
   expect_equal(v, 0.7, tolerance = 1e-4)
 
   expect_error(spatial_copula(clayGumb(), distances = c(10, 200, 500), combination = "geometric"),
                "must contain 0")
-  expect_error(spatial_copula(clayGumb(), distances = c(0, 200, 500), spDepFun = function(h) "kendall",
+  expect_error(spatial_copula(clayGumb(), distances = c(0, 200, 500), dep_fun = function(h) "kendall",
                               combination = "geometric"), "convex")
 })
 
@@ -106,7 +108,7 @@ test_that("spatio-temporal vines with two trees fit and predict", {
   expect_true(is.finite(fit@loglik))
 
   target <- cube["u", c(1, 5), 4:5]
-  pn <- neighbours(cube, target, var = "u", size = 3, tlags = -(0:1), min.dist = 10)
+  pn <- neighbours(cube, target, var = "u", size = 3, tlags = -(0:1), min_dist = 10)
   pred <- quiet(predict(fit@copula, pn, cube, target, list(q = identity)))
   q <- pred[["quantile.0.5"]]
   expect_equal(dim(q), c(2, 2))
@@ -118,7 +120,7 @@ test_that("Gaussian copula predictions go through predict()", {
   qMar <- function(p) qlnorm(p, mean(log(meuse$zinc)), sd(log(meuse$zinc)))
   gauss <- spatial_gauss_copula(function(h) exp(-h / 400))
   expect_output(show(gauss), "Gaussian")
-  pn <- neighbours(meuse[1:15, ], meuse[16:20, ], var = "marZinc", size = 3, min.dist = 10)
+  pn <- neighbours(meuse[1:15, ], meuse[16:20, ], var = "marZinc", size = 3, min_dist = 10)
   pred <- quiet(predict(gauss, pn, meuse[1:15, ], meuse[16:20, ], list(q = qMar)))
   # spcopula 0.2-5 (differs slightly: the shared code integrates over [0, 1])
   expect_equal(pred$quantile.0.5, c(736.835271732940, 386.727876071744, 318.511183245556,
@@ -136,10 +138,10 @@ test_that("spatio-temporal covariate vines predict", {
   cube$cov <- matrix(runif(30), 5, 6)
   spC <- function(p) quiet(spatial_copula(list(claytonCopula(p), indepCopula()), c(0, 400)))
   stCop <- spacetime_copula(list(spC(2), spC(1)), tlags = -(0:1))
-  coVarCop <- function(stInd) normalCopula(0.5)
-  cvvc <- covariate_vine_copula(coVarCop, stCop, vineCopula(5L))
+  covar_cop <- function(stInd) normalCopula(0.5)
+  cvvc <- covariate_vine_copula(covar_cop, stCop, vineCopula(5L))
   target <- cube[c("cov"), c(1, 5), 3]
-  pn <- neighbours(cube, target, var = "u", coVar = "cov", size = 3, tlags = -(0:1), min.dist = 10)
+  pn <- neighbours(cube, target, var = "u", covar = "cov", size = 3, tlags = -(0:1), min_dist = 10)
   pred <- quiet(predict(cvvc, pn, cube, target, list(q = identity)))
   expect_true(all(pred[["quantile.0.5"]] > 0 & pred[["quantile.0.5"]] < 1))
 })

@@ -69,14 +69,14 @@ spCop <- spatial_copula(components=list(normalCopula(), tCopula(),
                                   claytonCopula(), claytonCopula(), claytonCopula(),
                                   claytonCopula(), indepCopula()),
                   distances=bins$meanDists,
-                  spDepFun=calcKTauPol, unit="m")
+                  dep_fun=calcKTauPol, unit="m")
 
 spVineCop <- distance_vine_copula(spCop, vineCopula(4L))
 
 meuse$rtZinc <- rank(meuse$zinc)/(nrow(meuse)+1)
 
 dataLocs <- meuse[1:4,]
-predMeuseNeigh <- neighbours(dataLocs, predLocs, 5, "rtZinc", min.dist=-1)
+predMeuseNeigh <- neighbours(dataLocs, predLocs, 5, "rtZinc", min_dist=-1)
 
 qMar <- function(x) {
   qlnorm(x,mean(log(meuse$zinc)),sd(log(meuse$zinc)))
@@ -138,9 +138,9 @@ stQuerry <- st_as_stars(list(dummy = matrix(NA_real_, 2, 2)),
                                             crs = 28992),
                           time = time[2:3]))
 
-stNeigh <- neighbours(stData, stQuerry, var="var1", size=3, tlags=-(0:1))
+neigh <- neighbours(stData, stQuerry, var="var1", size=3, tlags=-(0:1))
 
-predST <- predict(stVineCop, stNeigh, stData, stQuerry, list(q=qunif),
+predST <- predict(stVineCop, neigh, stData, stQuerry, list(q=qunif),
                   "quantile", 0.5)
 predST[["quantile.0.5"]]
 
@@ -148,7 +148,7 @@ predST[["quantile.0.5"]]
 # the covariate of the targets is taken from the target cube
 stData$cov <- matrix(runif(6), 2, 3)
 stQuerry$cov <- matrix(runif(4), 2, 2)
-stCoNeigh <- neighbours(stData, stQuerry["cov"], var="var1", coVar="cov",
+stCoNeigh <- neighbours(stData, stQuerry["cov"], var="var1", covar="cov",
                         size=3, tlags=-(0:1))
 
 stCVVC <- covariate_vine_copula(function(stInd) normalCopula(0.5), stCop,

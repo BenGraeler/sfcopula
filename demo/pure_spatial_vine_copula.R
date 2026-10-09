@@ -49,7 +49,7 @@ colnames(loglikTau$loglik)[bestFitTau]
 spCop <- spatial_copula(c(families[bestFitTau[c(1,1:8)]],
                     indepCopula()),
                   distances=c(0, bins$meanDists[1:9]),
-                  spDepFun=calcKTau, unit="m")
+                  dep_fun=calcKTau, unit="m")
 
 ## estimation neighbourhood for the pure spatial vine copula
 #############################################################
@@ -64,7 +64,7 @@ points(bins2$meanDists, bins2$lagCor, pch=2)
 calcKTau2 <- fit_cor_fun(bins2, degree=3,cutoff=500, bounds = c(0.001,1))
 curve(calcKTau2,0, 800, col="green",add=TRUE)
 
-loglikTau2 <- loglik_by_lags(bins2, families = families, calcCor =  calcKTau2)
+loglikTau2 <- loglik_by_lags(bins2, families = families, calc_cor =  calcKTau2)
 bestFitTau2 <- apply(loglikTau2$loglik, 1, which.max)
 colnames(loglikTau2$loglik)[bestFitTau2]
 
@@ -73,7 +73,7 @@ colnames(loglikTau2$loglik)[bestFitTau2]
 spCop2 <- spatial_copula(c(families[bestFitTau2[c(1,1:6)]],
                      indepCopula()),
                    distances=c(0, bins2$meanDists[1:7]),
-                   spDepFun=calcKTau2, unit="m")
+                   dep_fun=calcKTau2, unit="m")
 
 ## third spatial tree
 ######################
@@ -83,7 +83,7 @@ points(bins3$meanDists, bins3$lagCor, pch=3)
 calcKTau3 <- fit_cor_fun(bins3, degree=1, cutoff=500, bounds=c(0.001,1))
 curve(calcKTau3, 0, 500, col="red", add=TRUE)
 
-loglikTau3 <- loglik_by_lags(bins3, families = families, calcCor = calcKTau3)
+loglikTau3 <- loglik_by_lags(bins3, families = families, calc_cor = calcKTau3)
 bestFitTau3 <- apply(loglikTau3$loglik, 1, which.max)
 colnames(loglikTau3$loglik)[bestFitTau3]
 
@@ -92,7 +92,7 @@ colnames(loglikTau3$loglik)[bestFitTau3]
 spCop3 <- spatial_copula(c(families[bestFitTau3[c(1,1:5)]],
                      indepCopula()),
                    distances=c(0, bins3$meanDists[1:6]),
-                   spDepFun=calcKTau3, unit="m")
+                   dep_fun=calcKTau3, unit="m")
 
 ## fourth spatial tree
 #######################
@@ -106,7 +106,7 @@ legend("topright",c("1. spatial cop.", "2. spatial cop.",
                     "3. spatial cop.", "4. spatial cop."),
        pch=1:4,col=c("purple","green","red","blue"),lty=1)
 
-loglikTau4 <- loglik_by_lags(bins4, families = families,calcCor =  calcKTau4)
+loglikTau4 <- loglik_by_lags(bins4, families = families,calc_cor =  calcKTau4)
 bestFitTau4 <- apply(loglikTau4$loglik, 1, which.max)
 colnames(loglikTau4$loglik)[bestFitTau4]
 
@@ -115,7 +115,7 @@ colnames(loglikTau4$loglik)[bestFitTau4]
 spCop4 <- spatial_copula(c(families[bestFitTau4[c(1,1:3)]], normalCopula(0),
                      indepCopula()),
                    distances=c(0, bins4$meanDists[1:5]),
-                   spDepFun=calcKTau4, unit="m")
+                   dep_fun=calcKTau4, unit="m")
 
 ## pure spatial vine
 #####################
@@ -127,11 +127,11 @@ vineDim <- 5L
 
 meuse$lnZinc <- pMar(meuse$zinc)
 meuseNeigh <- neighbours(data=meuse, target=meuse, prediction=T, 
-                            min.dist=10, var="lnZinc", size=vineDim)
+                            min_dist=10, var="lnZinc", size=vineDim)
 
 # meuse$evZinc <- pMar(meuse$zinc)
 # meuseNeigh <- neighbours(data=meuse, target=meuse, prediction=T, 
-#                             min.dist=10, var="evZinc", size=vineDim)
+#                             min_dist=10, var="evZinc", size=vineDim)
 
 ## leave-one-out x-validation
 ##############################

@@ -7,9 +7,9 @@ setGeneric("predict")
 # conditioning values of the i-th neighbourhood (the central location is
 # either missing (spatial prediction) or not part of the data (spatio-temporal));
 # covariates (last columns) are only kept on request
-.condValues <- function(neigh, i, coVar = FALSE) {
+.condValues <- function(neigh, i, covar = FALSE) {
   x <- as.numeric(neigh@data[i,])
-  if (!coVar && length(neigh@coVar) > 0)
+  if (!covar && length(neigh@coVar) > 0)
     x <- x[seq_len(length(x) - length(neigh@coVar))]
   if (.isStNeighbourhood(neigh) && neigh@prediction)
     return(x)
@@ -90,9 +90,9 @@ setMethod("predict", signature("distance_vine_copula"), predictDistanceVine)
 ## spatial Gaussian copula
 ###########################
 
-spatial_gauss_copula <- function(corFun) {
-  stopifnot(is.function(corFun))
-  new("spatial_gauss_copula", corFun = corFun)
+spatial_gauss_copula <- function(cor_fun) {
+  stopifnot(is.function(cor_fun))
+  new("spatial_gauss_copula", corFun = cor_fun)
 }
 
 setMethod("show", signature("spatial_gauss_copula"), function(object) {
@@ -130,9 +130,13 @@ setMethod("predict", signature("spatial_gauss_copula"), predictSpatialGauss)
 
 # condVar: the neighbours followed by the covariate (as in the neighbourhood data)
 # centre: index of the central location passed to the covariate copula function
-condCovariateVine <- function (condVar, dists, vine, n = 1000, ..., centre) {
+condCovariateVine <- function (cond_var, dists, vine, n = 1000, ..., centre) {
+  if (missing(cond_var))
+    cond_var <- .dotsArg(list(...), "condVar", "cond_var", NULL)
+  if (missing(centre))
+    centre <- .dotsArg(list(...), "stInd", "centre", NULL)
   xVals <- .condGrid(n)
-  repCondVar <- matrix(condVar, ncol = length(condVar), nrow = length(xVals), byrow = T)
+  repCondVar <- matrix(cond_var, ncol = length(cond_var), nrow = length(xVals), byrow = T)
   density <- dCovariateVine(cbind(xVals, repCondVar), vine, h = dists, centre = centre)
   .condDensityFun(xVals, density)
 }
@@ -148,7 +152,7 @@ predictCovariateVine <- function(object, neigh, data, target, margin,
   centre <- .centreIndex(neigh)
   condFunAt <- function(i) {
     dists <- if (isSt) neigh@distances[i,,,drop=FALSE] else neigh@distances[i,]
-    cond_vine(.condValues(neigh, i, coVar = TRUE), dists, object,
+    cond_vine(.condValues(neigh, i, covar = TRUE), dists, object,
               centre = if (isSt) centre[i,] else centre[i])
   }
   .predictAll(neigh, target, condFunAt, margin, method, p, ...)

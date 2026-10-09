@@ -28,9 +28,27 @@
 \alias{spCopPredict}
 \alias{calcSpTreeDists}
 \alias{spVineCopula}
+\alias{kendallRP}
+\alias{criticalLevel}
+\alias{criticalPair}
+\alias{criticalTriple}
+\alias{kendallDistribution}
+\alias{getKendallDistr}
+\alias{genEmpKenFun}
+\alias{genInvKenFun}
+\alias{bivJointDepFun}
+\alias{lowerBivJointDepFun}
+\alias{upperBivJointDepFun}
+\alias{empBivJointDepFun}
+\alias{lowerEmpBivJointDepFun}
+\alias{upperEmpBivJointDepFun}
+\alias{rankTransform}
+\alias{dependencePlot}
+\alias{unitScatter}
+\alias{univScatter}
 \title{Deprecated spcopula-style function names}
 \description{
-These function names stem from the \pkg{spcopula} package and are deprecated in favour of snake_case names and of functions that unify the spatial and spatio-temporal case. They issue a deprecation warning and call the new function: most of them forward all arguments unchanged, the others translate their \pkg{spcopula} argument list into a call of the new function.
+These function names stem from the \pkg{spcopula} package and are deprecated in favour of snake_case names and of functions that unify the spatial and spatio-temporal case. They issue a deprecation warning and call the new function: most of them forward all arguments unchanged, the others translate their \pkg{spcopula} argument list into a call of the new function. Likewise, the camelCase argument names of \pkg{spcopula} (e.g. \code{spDepFun}, \code{coVar}, \code{min.dist}, \code{cor.method}) are still accepted by the new functions with a warning.
 }
 \usage{
 stCube(...)
@@ -67,6 +85,24 @@ spCopPredict(predNeigh, dataLocs, predLocs, spVine, margin,
              method = "quantile", p = 0.5, ...)
 calcSpTreeDists(...)
 spVineCopula(spCop, topCop = NULL)
+kendallRP(...)
+criticalLevel(...)
+criticalPair(...)
+criticalTriple(...)
+kendallDistribution(...)
+getKendallDistr(...)
+genEmpKenFun(...)
+genInvKenFun(...)
+bivJointDepFun(...)
+lowerBivJointDepFun(...)
+upperBivJointDepFun(...)
+empBivJointDepFun(...)
+lowerEmpBivJointDepFun(...)
+upperEmpBivJointDepFun(...)
+rankTransform(...)
+dependencePlot(...)
+unitScatter(...)
+univScatter(formula = NULL, smpl)
 }
 \arguments{
   \item{...}{arguments passed on to the new function.}
@@ -86,6 +122,7 @@ spVineCopula(spCop, topCop = NULL)
   \item{spVine, stVine}{the vine copula, passed as \code{object} to \code{\link[=predict,distance_vine_copula-method]{predict}}.}
   \item{margin, method, p}{see \code{\link[=predict,distance_vine_copula-method]{predict}}.}
   \item{corFun}{the correlation function, turned into a \code{\link{spatial_gauss_copula}} for \code{\link[=predict,spatial_gauss_copula-method]{predict}}; \code{spGaussCopPredict} always uses the quantile predictor.}
+  \item{formula, smpl}{see \code{\link{unit_scatter}}.}
 }
 \details{
 \tabular{ll}{
@@ -118,6 +155,24 @@ spVineCopula(spCop, topCop = NULL)
 \code{spCopPredict} \tab \code{\link[=predict,distance_vine_copula-method]{predict}} \cr
 \code{calcSpTreeDists} \tab \code{\link{tree_dists}} \cr
 \code{spVineCopula} \tab \code{\link{distance_vine_copula}} \cr
+\code{kendallRP} \tab \code{\link{kendall_rp}} \cr
+\code{criticalLevel} \tab \code{\link{critical_level}} \cr
+\code{criticalPair} \tab \code{\link{critical_pair}} \cr
+\code{criticalTriple} \tab \code{\link{critical_triple}} \cr
+\code{kendallDistribution} \tab \code{\link{kendall_distribution}} \cr
+\code{getKendallDistr} \tab \code{\link{get_kendall_distr}} \cr
+\code{genEmpKenFun} \tab \code{\link{gen_emp_ken_fun}} \cr
+\code{genInvKenFun} \tab \code{\link{gen_inv_ken_fun}} \cr
+\code{bivJointDepFun} \tab \code{\link{biv_joint_dep_fun}} \cr
+\code{lowerBivJointDepFun} \tab \code{\link{lower_biv_joint_dep_fun}} \cr
+\code{upperBivJointDepFun} \tab \code{\link{upper_biv_joint_dep_fun}} \cr
+\code{empBivJointDepFun} \tab \code{\link{emp_biv_joint_dep_fun}} \cr
+\code{lowerEmpBivJointDepFun} \tab \code{\link{lower_emp_biv_joint_dep_fun}} \cr
+\code{upperEmpBivJointDepFun} \tab \code{\link{upper_emp_biv_joint_dep_fun}} \cr
+\code{rankTransform} \tab \code{\link{rank_transform}} \cr
+\code{dependencePlot} \tab \code{\link{dependence_plot}} \cr
+\code{unitScatter} \tab \code{\link{unit_scatter}} \cr
+\code{univScatter} \tab \code{\link{unit_scatter}} \cr
 }
 S4 classes have been renamed and merged accordingly, e.g. \code{spCopula} and \code{spGeomCopula} to \code{\linkS4class{spatial_copula}}, \code{mixedSpVineCopula}, \code{pureSpVineCopula} and \code{stVineCopula} to \code{\linkS4class{distance_vine_copula}}, and \code{neighbourhood} and \code{stNeighbourhood} to \code{\linkS4class{neighbourhood}}; objects of the old classes can be translated with \code{\link{upgrade_spcopula}}.
 }

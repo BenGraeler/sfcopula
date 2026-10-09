@@ -1,12 +1,12 @@
 ## spatial Gaussian Copula
 
 # "density" evaluation
-spatial_gauss_loglik <- function(corFun, neigh, dataLocs, log=TRUE) {
-  if (is(corFun, "spatial_gauss_copula"))
-    corFun <- corFun@corFun
+spatial_gauss_loglik <- function(cor_fun, neigh, data, log=TRUE) {
+  if (is(cor_fun, "spatial_gauss_copula"))
+    cor_fun <- cor_fun@corFun
   neighDim <- ncol(neigh@data) - length(neigh@coVar)
   
-  allDataDists <- .spDistMat(.pointGeom(dataLocs))
+  allDataDists <- .spDistMat(.pointGeom(data))
   
   pb <- txtProgressBar(0, nrow(neigh@data), 0, width = getOption("width") - 10, style = 3)
   
@@ -16,7 +16,7 @@ spatial_gauss_loglik <- function(corFun, neigh, dataLocs, log=TRUE) {
     setTxtProgressBar(pb, i)
     tmpDists <- allDataDists[neigh@index[i,], neigh@index[i,]]
     
-    tmpCor <- corFun(tmpDists)
+    tmpCor <- cor_fun(tmpDists)
     
     tmpGaussCop <- normalCopula(tmpCor[lower.tri(tmpCor)], neighDim, dispstr="un")
     

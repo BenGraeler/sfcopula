@@ -73,7 +73,7 @@
 # k nearest neighbours of each point in predGeom among dataGeom, ignoring
 # all pairs closer than min.dist (e.g. the location itself); processed in
 # chunks to limit the memory footprint of the distance matrix
-.knn <- function(dataGeom, predGeom, k, min.dist) {
+.knn <- function(dataGeom, predGeom, k, min_dist) {
   nData <- length(dataGeom)
   nPred <- length(predGeom)
   index <- matrix(NA_integer_, nPred, k)
@@ -85,7 +85,7 @@
   for (start in seq(1, nPred, by = chunk)) {
     rows <- start:min(nPred, start + chunk - 1)
     d <- .spDistMat(predGeom[rows], dataGeom)
-    d[d < min.dist] <- Inf
+    d[d < min_dist] <- Inf
     for (r in seq_along(rows)) {
       nn <- order(d[r, ])[1:min(k, nData)]
       nn <- nn[is.finite(d[r, nn])]
@@ -150,7 +150,7 @@
 # spatio-temporal target locations as pairs of (geometry, time instance):
 # either a full vector data cube (all combinations, locations outer, time
 # inner) or an sf object with one time stamp per feature
-.stTargets <- function(x, timeCol) {
+.stTargets <- function(x, time_col) {
   if (inherits(x, "stars")) {
     geom <- .stGeom(x)
     time <- .stTime(x)
@@ -161,12 +161,12 @@
   }
   if (inherits(x, "sf")) {
     if (inherits(x, "sftime"))
-      timeCol <- attr(x, "time_column")
-    if (!timeCol %in% names(x))
-      stop("The spatio-temporal target needs a time column '", timeCol, "'.")
+      time_col <- attr(x, "time_column")
+    if (!time_col %in% names(x))
+      stop("The spatio-temporal target needs a time column '", time_col, "'.")
     geom <- .pointGeom(x)
-    return(list(geom = geom, time = x[[timeCol]], spInd = seq_along(geom),
-                time4row = x[[timeCol]], tInd = seq_len(nrow(x))))
+    return(list(geom = geom, time = x[[time_col]], spInd = seq_along(geom),
+                time4row = x[[time_col]], tInd = seq_len(nrow(x))))
   }
   stop("Spatio-temporal targets need to be a 'stars' vector data cube or an 'sf' object with a time column.")
 }

@@ -51,3 +51,4 @@ Collate:
   trunCopula.R
   spGeometric.R
   upgrade.R
+  zzzOldArguments.R

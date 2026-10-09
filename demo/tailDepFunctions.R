@@ -1,25 +1,25 @@
 library("sfcopula")
 data("simulatedTriples")
 
-rtPair <- 1-as.matrix(rankTransform(triples[,c(1,3)]))
+rtPair <- 1-as.matrix(rank_transform(triples[,c(1,3)]))
 
 plot(rtPair,asp=1)
 
-tdfEmp <- empBivJointDepFun(rtPair)
+tdfEmp <- emp_biv_joint_dep_fun(rtPair)
 plot(tdfEmp,ylim=c(0,1), ylab="tail index", xlab="u")
 abline(v=0.5, col="grey")
 
 gaussCop <- fitCopula(normalCopula(0), rtPair)@copula
-tdfGauss <- bivJointDepFun(gaussCop)
+tdfGauss <- biv_joint_dep_fun(gaussCop)
 curve(tdfGauss, add=T,col="green",n=500)
 
 gumbelCop <- fitCopula(gumbelCopula(2),rtPair)@copula
-tdfGumbel <- bivJointDepFun(gumbelCop)
+tdfGumbel <- biv_joint_dep_fun(gumbelCop)
 curve(tdfGumbel,add=T, col="blue",n=500)
 
 BB6Cop <- fitCopula(BB6Copula(c(5,2)), rtPair)@copula
 
-tdfBB6 <- bivJointDepFun(BB6Cop)
+tdfBB6 <- biv_joint_dep_fun(BB6Cop)
 curve(tdfBB6, add=T,col="red",n=500)
 legend("bottomright",
        c("empirical", "Gaussian", "Gumbel", "BB6"),

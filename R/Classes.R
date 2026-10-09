@@ -145,7 +145,7 @@ setClass("spacetime_copula", representation = representation("copula",
 ## Distance Vine Copula (spatial and spatio-temporal) ##
 ########################################################
 
-setClassUnion("optionalCopula", c("copula", "NULL"))
+setClassUnion("optional_copula", c("copula", "NULL"))
 
 validDistanceVineCopula <- function(object) {
   if (length(object@trees) == 0)
@@ -160,7 +160,7 @@ validDistanceVineCopula <- function(object) {
 }
 
 setClass("distance_vine_copula", representation("copula", trees="list", 
-                                                topCop="optionalCopula"),
+                                                topCop="optional_copula"),
          validity = validDistanceVineCopula, contains=list("copula"))
 
 #####################################

@@ -40,7 +40,10 @@ test_that("upgraded objects reproduce the results of spcopula", {
   expect_equal(dCopula(u3, new$pureVine,
                        h = list(matrix(c(50, 100), 1)[rep(1, 3), ], 120)), exp$pureVine)
   expect_equal(dCopula(u, new$cqs), exp$cqs)
-  expect_equal(dCopula(u, new$geom, h = h), exp$geom)
+  # the geometric copula's density is fixed in sfcopula: compare with a new object
+  geom <- spatial_copula(list(claytonCopula(4), gumbelCopula(2), indepCopula()), c(0, 200, 500),
+                         combination = "geometric")
+  expect_equal(dCopula(u, new$geom, h = h), dCopula(u, geom, h = h))
 })
 
 test_that("upgraded neighbourhoods work with the new functions", {

@@ -5,7 +5,7 @@
 ## constructor ##
 #################
 
-spacetime_copula <- function(components, tlags, distances=NA, stDepFun, unit="m", tres="day") {
+spacetime_copula <- function(components, tlags, distances=NA, dep_fun, unit="m", tres="day") {
   if(all(sapply(components, function(x) class(x)=="spatial_copula"))) {
     if(length(unique(sapply(components, function(x) x@unit))) >1 )
       stop("All spatial copulas need to have the same distance unit.")
@@ -14,9 +14,9 @@ spacetime_copula <- function(components, tlags, distances=NA, stDepFun, unit="m"
   } else {
     spCopList <- list()
     
-    if(!missing(stDepFun)) {
+    if(!missing(dep_fun)) {
       getSpCop <- function(comp,dist,time) spatial_copula(comp, dist,
-                                                    spDepFun=function(h) stDepFun(h, time, 1:length(tlags)), unit)
+                                                    dep_fun=function(h) dep_fun(h, time, 1:length(tlags)), unit)
       for(i in 1:length(tlags)){
         spCopList <- append(spCopList, getSpCop(components[[i]], distances[[i]], i))
       }
@@ -210,7 +210,7 @@ setMethod("invddvCopula", signature("numeric", "spacetime_copula"), invddvStCopu
                                                              claytonCopula(),
                                                              frankCopula(),
                                                              gumbelCopula()),
-                                  calcCor, lagSub=1:length(stBins$meanDists)) {
+                                  calc_cor, lag_sub=1:length(stBins$meanDists)) {
   nTimeLags <- dim(stBins$lagCor)[1]
   if(is.null(nTimeLags))
     nTimeLags <- 1
@@ -228,9 +228,9 @@ setMethod("invddvCopula", signature("numeric", "spacetime_copula"), invddvStCopu
     return(binnedData)
   }
   
-  lagData <- lapply(stBins$lags[[1]][lagSub], retrieveData, tempIndices=stBins$lags[[2]])
+  lagData <- lapply(stBins$lags[[1]][lag_sub], retrieveData, tempIndices=stBins$lags[[2]])
   
-  tmpBins <- list(meanDists=stBins$meanDists[lagSub])
+  tmpBins <- list(meanDists=stBins$meanDists[lag_sub])
   attr(tmpBins, "variable") <- var
   
   loglikTau <- list()
@@ -241,11 +241,11 @@ setMethod("invddvCopula", signature("numeric", "spacetime_copula"), invddvStCopu
       pairs[bool,]
     })
     
-    if(missing(calcCor))
+    if(missing(calc_cor))
       res <- loglik_by_lags.static(tmpLagData, families)
     else
       res <- loglik_by_lags.dyn(tmpBins, tmpLagData, families, 
-                                     function(h) calcCor(h, j, 1:nTimeLags))
+                                     function(h) calc_cor(h, j, 1:nTimeLags))
     loglikTau[[paste("loglik",j,sep="")]] <- res
   }
   

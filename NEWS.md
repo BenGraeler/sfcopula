@@ -1,6 +1,9 @@
 # sfcopula 0.1-0
 
 * First release of sfcopula, the successor of spcopula 0.2-5. sf and stars replace sp and spacetime.
+* All functions and arguments use snake_case names, except the copula families and copula helpers, which keep the
+  copula package's style on purpose (see README for the mapping). Deprecated: the spcopula function names (aliases)
+  and the spcopula camelCase argument names (accepted with a warning).
 * Functions and S4 classes use snake_case names, and spatial and spatio-temporal variants are merged. Each merged
   function or class dispatches on its input (see README for the full mapping):
   * `spatial_copula()` covers convex and geometric combinations (`combination` argument).

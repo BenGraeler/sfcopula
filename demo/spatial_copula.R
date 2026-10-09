@@ -42,14 +42,14 @@ copCandidates <- c(normalCopula(0.2), tCopula(0.2),
 
 ## find best fitting copula per lag class
 loglikTau <- loglik_by_lags(bins, meuse, families = copCandidates,
-                                 calcCor = calcKTauPol)
+                                 calc_cor = calcKTauPol)
 bestFitTau <- apply(loglikTau$loglik, 1, which.max)
 colnames(loglikTau$loglik)[bestFitTau]
 
 ## set-up a spatial Copula ##
 spCop <- spatial_copula(components = c(copCandidates[bestFitTau[1]], copCandidates[bestFitTau]),
                   distances=c(0, bins$meanDists),
-                  spDepFun=calcKTauPol, unit="m")
+                  dep_fun=calcKTauPol, unit="m")
 
 ## compare spatial copula loglik by lag:
 lagData <- lapply(bins$lags, function(x) {
@@ -95,7 +95,7 @@ predMedian <- NULL
 predMean <- NULL
 for(loc in 1:nrow(meuseNeigh@data)) { # loc <- 145
   cat("Location:",loc,"\n")
-  condSecVine <- cond_vine(condVar=as.numeric(meuseNeigh@data[loc,-1]), 
+  condSecVine <- cond_vine(cond_var=as.numeric(meuseNeigh@data[loc,-1]), 
                             dists=list(meuseNeigh@distances[loc,,drop=F]),meuseSpVine)
   
   predMedian <- c(predMedian, qMar(optimise(function(x) abs(integrate(condSecVine,0,x)$value-0.5),c(0,1))$minimum))

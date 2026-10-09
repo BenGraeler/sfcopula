@@ -95,7 +95,7 @@ rhoempCop <- function(copula){
 setMethod("rho",signature("empiricalCopula"), rhoempCop)
 
 setMethod("lambda", signature("empiricalCopula"), 
-          function(copula, ...) stop("No evaluation possible, try to plot 'empBivJointDepFun' for a visual assessment."))
+          function(copula, ...) stop("No evaluation possible, try to plot 'emp_biv_joint_dep_fun' for a visual assessment."))
 
 ##################################
 ##                              ##

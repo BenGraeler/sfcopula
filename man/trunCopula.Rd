@@ -34,6 +34,6 @@ contour(cop, pCopula, asp=1, main="CDF", n=201)
 points(rCopula_y(0.4, cop, 10), col="red")
 
 # too few points, but faster for package compilation
-kenCop <- getKendallDistr(cop, smpl)
+kenCop <- get_kendall_distr(cop, smpl)
 curve(kenCop, main="Kendall function", asp=1)
 }

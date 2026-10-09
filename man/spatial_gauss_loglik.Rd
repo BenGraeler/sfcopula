@@ -8,14 +8,15 @@ Density evaluation for a spatial Gaussian Copula
 Evaluates the density for a spatial Gaussian Copula.
 }
 \usage{
-spatial_gauss_loglik(corFun, neigh, dataLocs, log = TRUE)
+spatial_gauss_loglik(cor_fun, neigh, data, log = TRUE, ...)
 }
 
 \arguments{
-  \item{corFun}{A valid correlogram (i.e. producing a valid correlation matrix; e.g. based on a variogram) or a \code{\linkS4class{spatial_gauss_copula}}.}
+  \item{cor_fun}{A valid correlogram (i.e. producing a valid correlation matrix; e.g. based on a variogram) or a \code{\linkS4class{spatial_gauss_copula}}.}
   \item{neigh}{A \code{\linkS4class{neighbourhood}} object to be evaluated.}
-  \item{dataLocs}{The same \code{\link[sf]{sf}} (or \code{sfc}) object used to generate \code{neigh}.}
+  \item{data}{The same \code{\link[sf]{sf}} (or \code{sfc}) object used to generate \code{neigh}.}
   \item{log}{Should the log-likelihood be returned?}
+  \item{\dots}{deprecated argument names of \pkg{spcopula} (\code{corFun}, \code{dataLocs}) are accepted with a warning.}
 }
 \details{
 Evaluates the density for all neighbourhoods in \code{neigh} and returns the (log)-likelihood.

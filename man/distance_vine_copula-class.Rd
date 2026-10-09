@@ -2,7 +2,7 @@
 \Rdversion{1.1}
 \docType{class}
 \alias{distance_vine_copula-class}
-\alias{optionalCopula-class}
+\alias{optional_copula-class}
 \alias{show,distance_vine_copula-method}
 \alias{dCopula,matrix,distance_vine_copula-method}
 \alias{dCopula,numeric,distance_vine_copula-method}
@@ -20,7 +20,7 @@ Objects can be created by calls of the form \code{new("distance_vine_copula", ..
 \section{Slots}{
   \describe{
     \item{\code{trees}:}{Object of class \code{"list"} holding the bivariate distance dependent copulas of the lower trees, either \code{\linkS4class{spatial_copula}} or \code{\linkS4class{spacetime_copula}} objects. }
-    \item{\code{topCop}:}{Object of class \code{"optionalCopula"}, i.e. a \code{\linkS4class{copula}} or \code{NULL}. The top copula being constant over space (and time). It is either a R-Vine (\code{\linkS4class{vineCopula}}) or a bivariate copula (\code{\linkS4class{copula}}) joining the conditioned components (neighbours) or all trees of the vine are distance dependent bivariate copulas (\code{NULL}).}
+    \item{\code{topCop}:}{Object of class \code{"optional_copula"}, i.e. a \code{\linkS4class{copula}} or \code{NULL}. The top copula being constant over space (and time). It is either a R-Vine (\code{\linkS4class{vineCopula}}) or a bivariate copula (\code{\linkS4class{copula}}) joining the conditioned components (neighbours) or all trees of the vine are distance dependent bivariate copulas (\code{NULL}).}
     \item{\code{dimension}:}{Object of class \code{"integer"} giving the dimension of the vine copula (size of the neighbourhood). }
     \item{\code{parameters}:}{Object of class \code{"numeric"} empty }
     \item{\code{param.names}:}{Object of class \code{"character"} empty }
@@ -37,7 +37,7 @@ Class \code{"\linkS4class{Copula}"}, by class "copula", distance 2.
   \describe{
     \item{show}{\code{signature(object = "distance_vine_copula")}: a short description of the vine.}
     \item{dCopula}{\code{signature(u = "matrix", copula = "distance_vine_copula")}: the density of the vine, also for \code{u} being \code{"numeric"} or \code{"data.frame"}. The additional argument \code{h} is a list with the distances of each tree: a matrix with one row per row of \code{u} and one column per pair of the tree (or a vector for a single row) for spatial trees, and an array \code{[n, pairs, 2]} holding the spatial and temporal distances for spatio-temporal trees (see \code{\link{tree_dists}}). }
-    \item{fitCopula}{\code{signature(copula = "distance_vine_copula")}: fits the top copula of the vine for given distance dependent trees. The argument \code{data} is a \code{\linkS4class{neighbourhood}} or, if the vine has more than one tree, a list holding the \code{\linkS4class{neighbourhood}} and the data locations used to create it (\code{list(neigh, dataLocs)}). After dropping all distance dependent trees, a bivariate copula is selected by \code{\link[VineCopula]{BiCopSelect}} if two dimensions remain; for more than two dimensions \code{topCop} is fitted (a \code{\linkS4class{vineCopula}} if \code{topCop} is \code{NULL}) passing on \code{method}, which defaults to \code{list(StructureSelect = FALSE, indeptest = FALSE, familyset = NA)}. Returns a \code{\linkS4class{fitCopula}} object whose copula is the completed \code{distance_vine_copula}.}
+    \item{fitCopula}{\code{signature(copula = "distance_vine_copula")}: fits the top copula of the vine for given distance dependent trees. The argument \code{data} is a \code{\linkS4class{neighbourhood}} or, if the vine has more than one tree, a list holding the \code{\linkS4class{neighbourhood}} and the data locations used to create it (\code{list(neigh, dataLocs)}). After dropping all distance dependent trees, a bivariate copula is selected by \code{\link[VineCopula]{BiCopSelect}} if two dimensions remain; for more than two dimensions \code{top_cop} is fitted passing on \code{method}, which defaults to \code{list(StructureSelect = FALSE, indeptest = FALSE, familyset = NA)}. Returns a \code{\linkS4class{fitCopula}} object whose copula is the completed \code{distance_vine_copula}.}
     \item{rCopula}{\code{signature(n = "numeric", copula = "distance_vine_copula")}: simulates \code{n} samples from a vine without top copula; the additional argument \code{h} is a list with the distances of each tree: vectors for spatial trees and matrices with columns space and time for spatio-temporal trees.}
     \item{cond_vine}{\code{signature(vine = "distance_vine_copula")}: see \code{\link{cond_vine}}.}
     \item{predict}{\code{signature(object = "distance_vine_copula")}: see \code{\link[=predict,distance_vine_copula-method]{predict}}.}

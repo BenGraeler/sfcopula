@@ -37,26 +37,26 @@ Benedikt Graeler
 asCop <- asCopula(c(-2,1))
 asCopSmpl <- rCopula(100,asCop)
 
-unitScatter(smpl=asCopSmpl)
+unit_scatter(smpl=asCopSmpl)
 
 # conditional probabilities of an asymmetric copula given u
 asGivenU <- dduCopula(asCopSmpl,asCop)
 
 # vs. conditional probabilities of an asymmetric copula given v
 asGivenV <- ddvCopula(asCopSmpl[,c(2,1)],asCop)
-unitScatter(smpl=cbind(asGivenU, asGivenV))
+unit_scatter(smpl=cbind(asGivenU, asGivenV))
 
 normalCop <- normalCopula(.6)
 normCopSmpl <- rCopula(100,normalCop)
 
-unitScatter(smpl=normCopSmpl)
+unit_scatter(smpl=normCopSmpl)
 
 # conditional probabilities of a Gaussian copula given u
 normGivenU <- dduCopula(normCopSmpl,normalCop)
 
 # vs. conditional probabilities of a Gaussian copula given v
 normGivenV <- ddvCopula(normCopSmpl[,c(2,1)],normalCop)
-unitScatter(smpl=cbind(normGivenU, normGivenV))
+unit_scatter(smpl=cbind(normGivenU, normGivenV))
 }
 
 \keyword{partial derivative}

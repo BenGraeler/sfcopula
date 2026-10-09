@@ -74,6 +74,9 @@ pairsInt <- findInterval(h, dists, left.open = TRUE, rightmost.closed = TRUE)
     }
   }
   
+  # the formulas below are written for L^(1-w) * H^w, the cdf is L^p * H^(1-p)
+  p <- 1 - p
+
 # f[u,v]^(-1-p)        g[u,v]^(-2+p)         ((-1+p)   (p   (g[u,v]       f^(0,1)[u,v] -f[u,v]      g^(0,1)[u,v])   (g[u,v]       f^(1,0)[u,v]- f[u,v]      g^(1,0)[u,v]) - f[u,v]        g[u,v]^2       f^(1,1)[u,v])+ p   f[u,v]^2      g[u,v]       g^(1,1)[u,v])
   res <- dCopLow[,1]^(-1-p) * dCopHigh[,1]^(-2+p) * ((-1+p) * (p * (dCopHigh[,1]*dCopLow[,3] - dCopLow[,1]*dCopHigh[,3]) * (dCopHigh[,1]*dCopLow[,2] - dCopLow[,1]*dCopHigh[,2]) - dCopLow[,1] * dCopHigh[,1]^2*dCopLow[,4]) + p * dCopLow[,1]^2*dCopHigh[,1]*dCopHigh[,4])
   
@@ -117,6 +120,9 @@ dduCop.spGeomCop <- function(u, copula, h, do.logs=F, ...) {
     }
   }
   
+  # the formulas below are written for L^(1-w) * H^w, the cdf is L^p * H^(1-p)
+  p <- 1 - p
+
 # (1-c)   f[u,v]^-c        g[u,v]^c         f^(1,0)[u,v]+ c   f[u,v]^(1-c)        g[u,v]^(-1+c)        g^(1,0)[u,v]
   (1-p) * dCopLow[,1]^-p * dCopHigh[,1]^p * dCopLow[,2] + p * dCopLow[,1]^(1-p) * dCopHigh[,1]^(p-1) * dCopHigh[,2]
 }
@@ -155,6 +161,9 @@ ddvCop.spGeomCop <- function(u, copula, h) {
     }
   }
   
+  # the formulas below are written for L^(1-w) * H^w, the cdf is L^p * H^(1-p)
+  p <- 1 - p
+
   # (1-c) f[u,v]^-c          g[u,v]^c         f^(0,1)[u,v]+ c f[u,v]^(1-c)      g[u,v]^(-1+c)        (g^(0,1))[u,v]
   (1-p) * dCopLow[,1]^(-p) * dCopHigh[,1]^p * dCopLow[,2] + p*dCopLow[,1]^(1-p)*dCopHigh[,1]^(p-1) * dCopHigh[,2]
   

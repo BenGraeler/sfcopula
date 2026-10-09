@@ -9,7 +9,7 @@ Polynomials of different degrees can be fitted to the spatial/spatio-temporal co
 }
 \usage{
 fit_cor_fun(bins, degree = 3, cutoff = NA, tlags, bounds = c(0, 1), 
-          cor.method = NULL, weighted = FALSE)
+          cor_method = NULL, weighted = FALSE, ...)
 }
 \arguments{
   \item{bins}{Typically the output of \code{\link{calc_bins}}. Any \code{data.frame} with a columns \code{lagCor} and \code{meanDists} in the first two columns will do.}
@@ -17,8 +17,9 @@ fit_cor_fun(bins, degree = 3, cutoff = NA, tlags, bounds = c(0, 1),
   \item{cutoff}{Maximal distance to which lags should be included in the polynomial fit.}
   \item{tlags}{The temporal lags used for the genration of \code{bins}.}
   \item{bounds}{Bounds of the correlation values. The default is set [0,1] not allowing any negative relationship but perfect positive dependence.}
-  \item{cor.method}{The output of \code{\link{calc_bins}} has an attribute \code{cor.method}, in case this is not present the parameter \code{cor.method} will be used. In case the parameter \code{cor.method} is not \code{NULL} and the attribute \code{cor.method} is present, they will be compared.}
+  \item{cor_method}{The output of \code{\link{calc_bins}} has an attribute \code{cor_method}, in case this is not present the parameter \code{cor_method} will be used. In case the parameter \code{cor_method} is not \code{NULL} and the attribute \code{cor_method} is present, they will be compared.}
   \item{weighted}{shall the residuals be weighted by the number of points in the lag class?}
+  \item{\dots}{deprecated argument names of \pkg{spcopula} (\code{cor.method}) are accepted with a warning.}
 }
 
 \value{Returns a one/two-place function that provides correlation estimates for every separating spatial/spatio-temporal distance.}

@@ -38,7 +38,7 @@ export(hkCopula)
 export(trunCopula)
 
 # general functions
-export(rankTransform, dependencePlot, unitScatter, univScatter)
+export(rank_transform, dependence_plot, unit_scatter)
 export(fitCopula)
 export(dduCopula,ddvCopula)
 export(invdduCopula, invddvCopula)
@@ -54,13 +54,13 @@ export(tree_dists, drop_tree)
 
 # fitting
 export(fit_cor_fun, loglik_by_lags, fit_spatial_copula, compose_spatial_copula)
-export(bivJointDepFun, lowerBivJointDepFun, upperBivJointDepFun)
-export(empBivJointDepFun, lowerEmpBivJointDepFun, upperEmpBivJointDepFun)
+export(biv_joint_dep_fun, lower_biv_joint_dep_fun, upper_biv_joint_dep_fun)
+export(emp_biv_joint_dep_fun, lower_emp_biv_joint_dep_fun, upper_emp_biv_joint_dep_fun)
 
 # MRP functions
-export(genEmpKenFun, genInvKenFun)
-export(kendallRP, criticalLevel, kendallDistribution, getKendallDistr)
-export(criticalPair, criticalTriple)
+export(gen_emp_ken_fun, gen_inv_ken_fun)
+export(kendall_rp, critical_level, kendall_distribution, get_kendall_distr)
+export(critical_pair, critical_triple)
 export(kendall)
 
 ## classes
@@ -81,3 +81,7 @@ export(spCopula, stCopula, spGeomCopula, spVineCopula, stVineCopula, stCoVarVine
        fitSpCopula, composeSpCopula, dropSpTree, dropStTree, calcSpTreeDists,
        condSpVine, condStVine, condStCoVarVine, condCovariate,
        spCopPredict, stCopPredict, spGaussCopPredict, spGaussLogLik)
+export(kendallRP, criticalLevel, criticalPair, criticalTriple, kendallDistribution, getKendallDistr,
+       genEmpKenFun, genInvKenFun, bivJointDepFun, lowerBivJointDepFun, upperBivJointDepFun,
+       empBivJointDepFun, lowerEmpBivJointDepFun, upperEmpBivJointDepFun,
+       rankTransform, dependencePlot, unitScatter, univScatter)

@@ -38,7 +38,7 @@ Brechmann, Eike Christian. "Hierarchical Kendall copulas: Properties and inferen
 Benedikt Graeler
 }
 
-\seealso{Vine copulas for a tree structure \code{\linkS4class{vineCopula}} and \code{\link{kendallDistribution}} for details on the Kendall distribution.
+\seealso{Vine copulas for a tree structure \code{\linkS4class{vineCopula}} and \code{\link{kendall_distribution}} for details on the Kendall distribution.
 }
 
 \examples{

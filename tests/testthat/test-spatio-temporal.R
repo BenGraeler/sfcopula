@@ -16,7 +16,7 @@ test_that("as_spacetime_cube builds a vector data cube from long sf tables", {
 
 test_that("spatio-temporal neighbourhoods are built from stars cubes", {
   cube <- toyCube(6)
-  nb <- neighbours(cube, var = "u", size= 3, tlags = -(0:1), coVar = "cov")
+  nb <- neighbours(cube, var = "u", size= 3, tlags = -(0:1), covar = "cov")
   # 5 locations x (6 - 1) time steps, 1 + 2*2 neighbours + 1 covariate
   expect_equal(dim(nb@data), c(25, 6))
   expect_equal(dim(nb@distances), c(25, 4, 2))
@@ -48,7 +48,7 @@ test_that("spatio-temporal prediction works for stars and sf targets", {
 
   target <- cube["cov", c(1, 5), 3:4]
   nb <- neighbours(cube, target, size= 3, tlags = -(0:1), var = "u",
-                        prediction = TRUE, min.dist = 10)
+                        prediction = TRUE, min_dist = 10)
   expect_equal(nrow(nb@data), 4)
   pred <- quiet(predict(stVine, nb, cube, target, list(q = identity), "quantile"))
   expect_s3_class(pred, "stars")
@@ -59,7 +59,7 @@ test_that("spatio-temporal prediction works for stars and sf targets", {
   tsf <- st_sf(time = as.Date("2020-01-03") + c(0, 1),
                geometry = st_get_dimension_values(target, "geometry"))
   nb2 <- neighbours(cube, tsf, size= 3, tlags = -(0:1), var = "u",
-                         prediction = TRUE, min.dist = 10)
+                         prediction = TRUE, min_dist = 10)
   pred2 <- quiet(predict(stVine, nb2, cube, tsf, list(q = identity), "quantile"))
   expect_equal(pred2$quantile.0.5, q[cbind(1:2, 1:2)], ignore_attr = TRUE)
 

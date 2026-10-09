@@ -48,7 +48,7 @@ rho(cop)
 lambda(cop)
 
 # too few points, but faster for package compilation
-kenCop <- getKendallDistr(cop, smpl)
+kenCop <- get_kendall_distr(cop, smpl)
 curve(kenCop, main="Kendall function", asp=1)
 }
 \keyword{copula}

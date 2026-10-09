@@ -258,7 +258,7 @@ Starting with the covariate copula $c_{ZY}$, we investigate the correlation stru
 library("sf")
 library("stars")
 library("sfcopula")
-coVarCop <- function(stInd) {
+covar_cop <- function(stInd) {
   week <- min(ceiling(stInd[2] / 7), 52)
   copulaFromFamilyIndex(weekCop[[week]]$family, weekCop[[week]]$par, 
                         weekCop[[week]]$par2)
@@ -277,9 +277,9 @@ For the estimation of the spatio-temporal bivariate copula, we follow the sugges
 <<eval=FALSE>>=
 stBins <- calc_bins(EU_RB_2005, "marPM10", nbins = 40, tlags = -(0:4))
 @
-The resulting object \code{stBins} is of type \code{list} with entries \code{meanDists} denoting the mean spatial distance of spatio-temporal bins, \code{lagCor} holding the correlation values per spatial bin and temporal lag and \code{lags} providing spatial and temporal indices to access the data from the underlying vector data cube. Correlation functions (here five polynomials of degree three each) can directly be fitted to the above output and are joint in a spatio-temporal dependence function (\code{stDepFun}) through:
+The resulting object \code{stBins} is of type \code{list} with entries \code{meanDists} denoting the mean spatial distance of spatio-temporal bins, \code{lagCor} holding the correlation values per spatial bin and temporal lag and \code{lags} providing spatial and temporal indices to access the data from the underlying vector data cube. Correlation functions (here five polynomials of degree three each) can directly be fitted to the above output and are joint in a spatio-temporal dependence function (\code{dep_fun}) through:
 <<eval=FALSE>>=
-stDepFun <- fit_cor_fun(stBins, rep(3, 5), tlags = -(0:4))
+dep_fun <- fit_cor_fun(stBins, rep(3, 5), tlags = -(0:4))
 @
 Figure~\ref{fig:spacetime_copula} illustrates the empirical values of Kendall's tau per spatial bin and temporal lag alongside with the corresponding polynomial fits. These polynomials describe how the strength of dependence changes with spatial and temporal distance. Following the estimation procedure, we need to investigate how the dependence structure, i.e., the copula families change for different spatial bins and temporal lags. The polynomials describing Kendall's tau in terms of distance are used to derive the parameter of a set of copula families and their log-likelihood is calculated per spatial bin and temporal lag. In case the relationship between Kendall's tau and the copula parameters is not unique, the parameter is optimised based on a log-likelihood approach
 restricted under the desired value of Kendall’s tau. The function \code{loglik_by_lags} calculates the log-likelihoods per spatial bin and temporal lag additionally returning the evaluated copula:
@@ -298,7 +298,7 @@ families <- c(normalCopula(0.5), tCopula(0.5),
 
 <<eval=FALSE>>=
 loglikTau <- loglik_by_lags(stBins, EU_RB_2005, families,
-                                   stDepFun)
+                                   dep_fun)
 @
 
 
@@ -348,18 +348,18 @@ As the corresponding Kendall's tau value used to tune the bivariate copula's par
 
 <<eval=F>>=
 stBiCop <- spacetime_copula(components = listCops, distances = listDists, 
-                    tlags = -c(0:4), stDepFun = stDepFun)
+                    tlags = -c(0:4), dep_fun = dep_fun)
 @
 
 \subsubsection{Joining vine copula}
 
-For the further processing, the data needs to be rearranged in local neighbourhoods. In our application, we are interested in the nine strongest correlated neighbours. Typically, there is no easily identified metric selecting these and we start with a larger static neighbourhood structure following Figure~\ref{fig:stNeigh}. The function \code{reduce_neighbours} selects the $n$ strongest correlated neighbours as given in the third argument. To accomplish this, the spatio-temporal distances of the larger cubic neighbourhood are passed to the spatio-temporal dependence function \code{stDepFun} and the ones with the highest values are selected: 
+For the further processing, the data needs to be rearranged in local neighbourhoods. In our application, we are interested in the nine strongest correlated neighbours. Typically, there is no easily identified metric selecting these and we start with a larger static neighbourhood structure following Figure~\ref{fig:stNeigh}. The function \code{reduce_neighbours} selects the $n$ strongest correlated neighbours as given in the third argument. To accomplish this, the spatio-temporal distances of the larger cubic neighbourhood are passed to the spatio-temporal dependence function \code{dep_fun} and the ones with the highest values are selected: 
 <<eval=F>>=
-stNeigh <- neighbours(EU_RB_2005, var = "marPM10", size= 9, 
-                           tlags = -(0:4), timeSteps = 90, min.dist = 10)
-stRedNeigh <- reduce_neighbours(stNeigh, stDepFun, 9)
+neigh <- neighbours(EU_RB_2005, var = "marPM10", size= 9, 
+                           tlags = -(0:4), time_steps = 90, min_dist = 10)
+stRedNeigh <- reduce_neighbours(neigh, dep_fun, 9)
 @
-This approach allows to drop missing values and to select the next best (i.e., next strongest correlated) available neighbour. The argument \code{spSize} denotes the number of locations at the current level including the central location. By setting \code{timeSteps} to 90, every location will only be used at 90 randomly assigned time steps as a centre of the neighbourhood. This way, only temporal chunks of five consecutive days are used reducing unwanted autocorrelation in the time series but reflecting the local temporal structure of the phenomenon. With \code{min.dist} one ensures that any pair of neighbours has a minimum spatial separation distance (here 10~m). 
+This approach allows to drop missing values and to select the next best (i.e., next strongest correlated) available neighbour. The argument \code{spSize} denotes the number of locations at the current level including the central location. By setting \code{time_steps} to 90, every location will only be used at 90 randomly assigned time steps as a centre of the neighbourhood. This way, only temporal chunks of five consecutive days are used reducing unwanted autocorrelation in the time series but reflecting the local temporal structure of the phenomenon. With \code{min_dist} one ensures that any pair of neighbours has a minimum spatial separation distance (here 10~m). 
 
 The conditioning on the covariate EMEP and the evaluation of the spatio-temporal bivariate copula on the neighbours can be done separately. The spatio-temporal bivariate copula returns pseudo observations that are the values of the neighbours conditioned on the value of the central location ($u_{i|0}$ from Equation~\ref{eq:pseudoObs}) incorporating the spatio-temporal distances between these by
 
@@ -367,10 +367,10 @@ The conditioning on the covariate EMEP and the evaluation of the spatio-temporal
 condData <- drop_tree(stRedNeigh, EU_RB_2005, stBiCop)
 @
 
-In a loop, the weekly varying copulas as depicted in Figure~\ref{fig:corPM10vsEMEP} and encoded as \code{coVarCop} are used to relate the marginal transformed variable $\rm{PM}_{10}$ with its covariate EMEP. In order to select the appropriate copula, the spatio-temporal indices need to be retrieved from the larger neighbourhood:
+In a loop, the weekly varying copulas as depicted in Figure~\ref{fig:corPM10vsEMEP} and encoded as \code{covar_cop} are used to relate the marginal transformed variable $\rm{PM}_{10}$ with its covariate EMEP. In order to select the appropriate copula, the spatio-temporal indices need to be retrieved from the larger neighbourhood:
 
 <<eval=FALSE>>=
-condCoVa <- cond_covariate(stNeigh, coVarCop)
+condCoVa <- cond_covariate(neigh, covar_cop)
 @
 
  Binding this conditioned column \code{condCoVa} with the conditioned data from the spatio-temporal bivariate copula \code{condData} yields the data set for the upper vine estimation through the generic function \code{fitCopula}:
@@ -383,7 +383,7 @@ vineFit <- fitCopula(vineCopula(10L), secTreeData)
 Following the initial definition of the function \code{fitCopula}, the copula family that should be fitted needs to be provided as copula object. The call of the constructor \code{vineCopula} with an integer as argument (denoting the dimension) generates a canonical vine with independence copulas. The fitting routine sequentially selects the best fitting copula from a versatile set of copulas (see the documentation of \pkg{VineCopula}). The final spatio-temporal covariate vine copula is defined by:
 
 <<eval=FALSE>>=
-stCVVC <- covariate_vine_copula(coVarCop, stBiCop, vineFit@copula)
+stCVVC <- covariate_vine_copula(covar_cop, stBiCop, vineFit@copula)
 @
 
 The cross-validation carried out to assess the goodness of fit of this spatio-temporal vine copula drops the complete time series of each location in turn and predicts this time series based on the neighbouring data. In this application, we predict the expected value as given in Equation~\ref{eq:expectation} of the time series for each moment in time. Prediction for a spatio-temporal target \code{targetGeom}, either a vector data cube or an \code{sf} object with a time column, from the spatio-temporal vine copula is obtained by:
@@ -391,8 +391,8 @@ The cross-validation carried out to assess the goodness of fit of this spatio-te
 <<eval=FALSE>>=
 predNeigh <- neighbours(EU_RB_2005, targetGeom, size = 9, 
                         tlags = -(0:4), var = "marPM10", 
-                        coVar = "marEMEP", min.dist = 10)
-predNeigh <- reduce_neighbours(predNeigh, stDepFun, 9)
+                        covar = "marEMEP", min_dist = 10)
+predNeigh <- reduce_neighbours(predNeigh, dep_fun, 9)
 stVinePred <- predict(stCVVC, predNeigh, EU_RB_2005, targetGeom, 
                       list(q = qFun), method = "expectation")
 @

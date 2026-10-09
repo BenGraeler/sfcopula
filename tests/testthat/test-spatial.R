@@ -16,7 +16,7 @@ test_that("neighbourhoods match spcopula", {
 test_that("prediction neighbourhoods exclude the target and accept sfc", {
   meuse <- meuseZinc()
   pn <- neighbours(meuse[1:15, ], st_geometry(meuse[16:20, ]), var = "marZinc",
-                      size = 3, prediction = TRUE, min.dist = 10)
+                      size = 3, prediction = TRUE, min_dist = 10)
   expect_true(all(is.na(pn@data[, 1])))
   expect_equal(pn@index[, 1], 1:5)
   expect_true(all(pn@index[, -1] <= 15))
@@ -41,7 +41,7 @@ test_that("spatial vine fit and prediction match spcopula", {
   best <- apply(llTau$loglik, 1, which.max)
   spCop <- quiet(spatial_copula(components = c(fams[best[1]], fams[best]),
                           distances = c(0, bins$meanDists),
-                          spDepFun = calcKTauPol, unit = "m"))
+                          dep_fun = calcKTauPol, unit = "m"))
 
   neigh <- neighbours(meuse, var = "marZinc", size = 5)
   fit <- quiet(fitCopula(distance_vine_copula(spCop, vineCopula(4L)), list(neigh, meuse)))
@@ -49,7 +49,7 @@ test_that("spatial vine fit and prediction match spcopula", {
 
   spVine <- distance_vine_copula(list(spCop, spCop))
   pn <- neighbours(meuse[1:15, ], meuse[16:20, ], var = "marZinc",
-                      size = 3, prediction = TRUE, min.dist = 10)
+                      size = 3, prediction = TRUE, min_dist = 10)
   pred <- quiet(predict(spVine, pn, meuse[1:15, ], meuse[16:20, ],
                              list(q = qMar), "quantile"))
   expect_s3_class(pred, "sf")

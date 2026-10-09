@@ -23,7 +23,7 @@ bestFitTau <- apply(loglikTau$loglik, 1, which.max)
 
 spCop <- spatial_copula(components = c(copCandidates[bestFitTau[1]], copCandidates[bestFitTau]),
                   distances = c(0, bins$meanDists),
-                  spDepFun = calcKTauPol, unit = "m")
+                  dep_fun = calcKTauPol, unit = "m")
 
 meuseNeigh <- neighbours(meuse, var = "marZinc", size = 5L)
 meuseSpVine <- fitCopula(distance_vine_copula(spCop, vineCopula(4L)),

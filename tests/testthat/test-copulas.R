@@ -7,7 +7,7 @@ test_that("inverse partial derivatives of the spatial copula invert", {
                                       claytonCopula(), claytonCopula(), claytonCopula(),
                                       claytonCopula(), indepCopula()),
                     distances = c(0, bins$meanDists[1:9]),
-                    spDepFun = calcKTauPol, unit = "m")
+                    dep_fun = calcKTauPol, unit = "m")
 
   y <- dduCopula(c(0.3, 0.7), spCop, h = 300)
   expect_equal(invdduCopula(0.3, spCop, y, h = 300), 0.7, tolerance = 1e-4)

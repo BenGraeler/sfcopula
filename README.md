@@ -40,10 +40,13 @@ The demos cover the full workflows, for example `demo("spatial_copula", package 
 
 ## Migrating from spcopula
 
-Functions and classes for spatial and spatio-temporal modelling follow a snake_case naming scheme. The old
-spcopula names still work (they point to the merged functions below) but emit a deprecation warning (see `?"sfcopula-deprecated"`). The copula methods
-from the copula package (`dCopula()`, `fitCopula()`, `dduCopula()`, ...) and the non-spatial copula families keep their
-names, and function arguments are unchanged.
+Functions, classes and arguments follow a snake_case naming scheme. The old spcopula names still work, but emit a
+deprecation warning (see `?"sfcopula-deprecated"`): old function names point to the new (partly merged) functions,
+and the new functions accept the old camelCase argument names (e.g. `spDepFun`, `coVar`, `min.dist`, `cor.method`).
+Two groups keep the style of the copula package on purpose: the copula families (`asCopula()`, `cqsCopula()`,
+`tawn3pCopula()`, `empiricalCopula()`, ...) and the copula helpers (`invdduCopula()`, `invddvCopula()`,
+`qCopula_u()`, `rCopula_y()`, ...), as well as the methods for the copula package's generics (`dCopula()`,
+`fitCopula()`, `dduCopula()`, ...). Slot names (e.g. `@topCop`, `@coVar`) are unchanged.
 
 | spcopula | sfcopula |
 |---|---|
@@ -62,7 +65,20 @@ names, and function arguments are unchanged.
 | `condSpVine()`, `condStVine()`, `condStCoVarVine()` | `cond_vine()` |
 | `condCovariate()` | `cond_covariate()` |
 | `spCopPredict()`, `stCopPredict()`, `spGaussCopPredict()` | `predict(model, neigh, data, target, margin)` |
-| `spGaussLogLik()` | `spatial_gauss_loglik()` (models: `spatial_gauss_copula(corFun)`) |
+| `spGaussLogLik()` | `spatial_gauss_loglik()` (models: `spatial_gauss_copula(cor_fun)`) |
+| `kendallRP()`, `criticalLevel()`, `criticalPair()`, `criticalTriple()` | `kendall_rp()`, `critical_level()`, `critical_pair()`, `critical_triple()` |
+| `kendallDistribution()`, `getKendallDistr()`, `genEmpKenFun()`, `genInvKenFun()` | `kendall_distribution()`, `get_kendall_distr()`, `gen_emp_ken_fun()`, `gen_inv_ken_fun()` |
+| `bivJointDepFun()`, `lowerBivJointDepFun()`, `upperBivJointDepFun()` and the `emp...` versions | `biv_joint_dep_fun()`, `lower_biv_joint_dep_fun()`, `upper_biv_joint_dep_fun()`, `emp_biv_joint_dep_fun()`, ... |
+| `rankTransform()`, `dependencePlot()`, `unitScatter()`/`univScatter()` | `rank_transform()`, `dependence_plot()`, `unit_scatter()` |
+
+| spcopula argument | sfcopula argument |
+|---|---|
+| `spDepFun`, `stDepFun` | `dep_fun` |
+| `coVar`, `coVarCop`, `topCop` | `covar`, `covar_cop`, `top_cop` |
+| `min.dist`, `timeSteps`, `timeCol`, `spSize` | `min_dist`, `time_steps`, `time_col`, `size` |
+| `cor.method`, `calcCor`, `lagSub`, `bestFit` | `cor_method`, `calc_cor`, `lag_sub`, `best_fit` |
+| `condVar`, `stInd`, `n.trees`, `corFun`, `dataLocs` | `cond_var`, `centre`, `n_trees`, `cor_fun`, `data` |
+| `stNeigh`, `dropEmpty`, `kendallFun`, `KRP`, `kenFun` | `neigh`, `drop_empty`, `kendall_fun`, `krp`, `ken_fun` |
 
 The classes follow the same scheme: `spatial_copula`, `spacetime_copula`, `distance_vine_copula`,
 `covariate_vine_copula`, `spatial_gauss_copula` and `neighbourhood`. Spatial and spatio-temporal variants share

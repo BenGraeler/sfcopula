@@ -14,7 +14,7 @@
 
 hkCopula <- function(nestingCop, clusterCops, kenFuns=NULL) {
   if (is.null(kenFuns)) {
-    kenFuns <- lapply(clusterCops, function(copInd) getKendallDistr(copInd[[1]]))
+    kenFuns <- lapply(clusterCops, function(copInd) get_kendall_distr(copInd[[1]]))
   }
   
   new("hkCopula", 
@@ -87,7 +87,7 @@ rHkCop <- function(n, copula, ...) {
     cop <- copula@clusterCops[[i]][[1]]
     ind <- copula@clusterCops[[i]][[2]]
     ken <- copula@kenFuns[[i]]
-    invKen <- genInvKenFun(ken)
+    invKen <- gen_inv_ken_fun(ken)
     
     smpl[,ind] <- rCopula_y(invKen(nestSmpl[,i]), cop)
   }

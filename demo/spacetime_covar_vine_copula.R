@@ -74,7 +74,7 @@ mtext("copula family",4,4.5)
 #############################
 
 # define the coVariate Copula function
-coVarCop <- function(stInd) {
+covar_cop <- function(stInd) {
   week <- min(ceiling(stInd[2]/7), 9)
   copulaFromFamilyIndex(weekCop[[week]]$family, weekCop[[week]]$par, 
                         weekCop[[week]]$par2)
@@ -83,7 +83,7 @@ coVarCop <- function(stInd) {
 ## spatio-temporal copula
 # binning
 stBins <- calc_bins(EU_RB, "marPM10", nbins=20, tlags=-(0:2))
-stDepFun <- fit_cor_fun(stBins, rep(3, 5), tlags=-(0:4))
+dep_fun <- fit_cor_fun(stBins, rep(3, 5), tlags=-(0:4))
 
 
 ## 
@@ -97,11 +97,11 @@ points(stBins$meanDists/1000, stBins$lagCor[3,], col=fiveColors[1])
 abline(h=0)
 abline(h=0.025,col="grey")
 
-fun1 <- function(x) stDepFun(x*1000, 1, 5:1)
+fun1 <- function(x) dep_fun(x*1000, 1, 5:1)
 curve(fun1, 0, 1600, add=T, col=fiveColors[5])
-fun2 <- function(x) stDepFun(x*1000, 2, 5:1)
+fun2 <- function(x) dep_fun(x*1000, 2, 5:1)
 curve(fun2, 0, 1600, add=T, col=fiveColors[3])
-fun3 <- function(x) stDepFun(x*1000, 3, 5:1)
+fun3 <- function(x) dep_fun(x*1000, 3, 5:1)
 curve(fun3, 0, 1600, add=T, col=fiveColors[1])
 
 legend("topright",c("same day", "1 day before", "2 days before"),
@@ -113,7 +113,7 @@ families <- c(normalCopula(), tCopula(),
               claytonCopula(), frankCopula(), gumbelCopula(), 
               joeBiCopula())
 
-loglikTau <- loglik_by_lags(stBins, EU_RB, families, stDepFun)
+loglikTau <- loglik_by_lags(stBins, EU_RB, families, dep_fun)
 
 bestFitTau <- lapply(loglikTau, 
                      function(x) apply(apply(x$loglik[,1:6], 1, rank),
@@ -139,29 +139,29 @@ listCops[[3]] <- families[bestFitTau$loglik3[sort(unique(c(which(diff(bestFitTau
                                                            which(diff(bestFitTau$loglik3)!=0)+1,1,20)))]]
 
 stBiCop <- spacetime_copula(components = listCops, distances = listDists, 
-                    tlags=-c(0:2), stDepFun=stDepFun)
+                    tlags=-c(0:2), dep_fun=dep_fun)
 
 
 ## get the neighbours
-stNeigh <- neighbours(EU_RB, size=9, var="marPM10", coVar="marEMEP",
-                           tlags=-(0:2), timeSteps=20, min.dist=10)
-stRedNeigh <- reduce_neighbours(stNeigh, stDepFun, 5)
+neigh <- neighbours(EU_RB, size=9, var="marPM10", covar="marEMEP",
+                           tlags=-(0:2), time_steps=20, min_dist=10)
+stRedNeigh <- reduce_neighbours(neigh, dep_fun, 5)
 
 # condition on the spatio-temporal tree
 condData <- drop_tree(stRedNeigh, EU_RB, stBiCop)
 
 # condition the covariate on the observed phenomenon
-condCoVa <- cond_covariate(stRedNeigh, coVarCop)
+condCoVa <- cond_covariate(stRedNeigh, covar_cop)
 
 secTreeData <- cbind(condCoVa, as.matrix(condData@data))
 
 vineFit <- fitCopula(vineCopula(6L), secTreeData, method=list(familyset=1:6))
 
-stCVVC <- covariate_vine_copula(coVarCop, stBiCop, vineFit@copula)
+stCVVC <- covariate_vine_copula(covar_cop, stBiCop, vineFit@copula)
 
 stCVVC
 ## the same in one call: fitCopula drops the spatio-temporal tree, conditions
 ## the covariate and fits the top vine (the log-likelihood covers all parts)
-stCVVCFit <- fitCopula(covariate_vine_copula(coVarCop, stBiCop, vineCopula(6L)), stRedNeigh,
+stCVVCFit <- fitCopula(covariate_vine_copula(covar_cop, stBiCop, vineCopula(6L)), stRedNeigh,
                        method=list(familyset=1:6))
 stCVVCFit@loglik

@@ -12,7 +12,7 @@ The (spatio-temporal) space is subdivided into pairs of observations that belong
 }
 \usage{
 calc_bins(data, var, nbins = 15, boundaries = NA, cutoff = NA,
-         ..., cor.method="fasttau", plot=TRUE)
+         ..., cor_method="fasttau", plot=TRUE)
 }
 
 \arguments{
@@ -37,7 +37,7 @@ The largest spatial distance to be investigated, if set to \code{NA}, one third 
     \item{tlags}{a vector indicating the time lags to be investigated}
 }
 }
-  \item{cor.method}{
+  \item{cor_method}{
   defining the correlation method that should be used. Possible choices are \code{kendall}, \code{pearson}, \code{spearman} and \code{fasttau} (default) that re-uses a very fast implementation of Kendall's tau from \code{\link{VineCopula-package}}.
   }
   \item{plot}{Whether the correlogram should be plotted (default \code{TRUE}; the \code{stars} method defaults to \code{FALSE}).}
@@ -52,7 +52,7 @@ Distances are Euclidean distances in the units of the coordinate reference syste
 \item{lagNp}{A matrix with the number of complete pairs per temporal (rows) and spatial lag (columns), only in the spatio-temporal case.}
 \item{lagData}{The data pairs for each lag (\code{neighbourhood} case).}
 \item{lags}{In the spatial case, a list holding for each lag a matrix of the indices of the locations of each pair and their distance. In the spatio-temporal case, a list with the entries \code{sp} (the spatial lags as in the spatial case) and \code{time} (a matrix of temporal indices).}
-The attributes \code{cor.method} and \code{variable} store the correlation method and the variable's name.
+The attributes \code{cor_method} and \code{variable} store the correlation method and the variable's name.
 }
 \author{
 Benedikt Graeler

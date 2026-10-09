@@ -76,7 +76,7 @@ spCop <- spatial_copula(components=list(normalCopula(0.2), normalCopula(0.2),
                                   claytonCopula(0.2), claytonCopula(0.2),
                                   claytonCopula(0.2), indepCopula()),
                   distances=c(0,bins$meanDists),
-                  spDepFun=calcKTauPol, unit="m")
+                  dep_fun=calcKTauPol, unit="m")
 
 dCopula(u=matrix(c(.3,.3,.7,.7),ncol=2),spCop,h=c(200,400))
 pCopula(u=matrix(c(.3,.3,.7,.7),ncol=2),spCop,h=c(200,400))

@@ -16,10 +16,10 @@
 #                           "geometric": distance dependent geometric mean
 
 
-spatial_copula <- function(components, distances, spDepFun, unit="m",
+spatial_copula <- function(components, distances, dep_fun, unit="m",
                            combination=c("convex", "geometric")) {
   combination <- match.arg(combination)
-  if (combination == "geometric" && !missing(spDepFun))
+  if (combination == "geometric" && !missing(dep_fun))
     stop("A spatial dependence function is only supported for the convex combination.")
   
   indepCopInComponents <- sapply(components, function(x) class(x) == "indepCopula")
@@ -27,15 +27,15 @@ spatial_copula <- function(components, distances, spDepFun, unit="m",
     components[which(indepCopInComponents)] <- list(normalCopula(0.01))
   }
   
-  if (missing(spDepFun)) { 
+  if (missing(dep_fun)) { 
     calibMoa <- function(copula, h) return(NULL)
   } else {
-    if (is.na(match(spDepFun(NULL), c("kendall","spearman","id")))) 
-      stop("spDepFun(NULL) must return 'spearman', 'kendall' or 'id'.")
-    cat("The parameters of the components will be recalculated according to the provided spDepFun where possible. \nIn case no 1-1 relation is known, the copula as in components is used. \n")
-    calibMoa <- switch(spDepFun(NULL), 
-                       kendall=function(copula, h) iTau(copula, spDepFun(h)),
-                       spearman=function(copula, h) iRho(copula, spDepFun(h)),
+    if (is.na(match(dep_fun(NULL), c("kendall","spearman","id")))) 
+      stop("dep_fun(NULL) must return 'spearman', 'kendall' or 'id'.")
+    cat("The parameters of the components will be recalculated according to the provided dep_fun where possible. \nIn case no 1-1 relation is known, the copula as in components is used. \n")
+    calibMoa <- switch(dep_fun(NULL), 
+                       kendall=function(copula, h) iTau(copula, dep_fun(h)),
+                       spearman=function(copula, h) iRho(copula, dep_fun(h)),
                        id=function(copula, h) return(h))
     
     for (i in 1:length(components)) {
@@ -234,7 +234,7 @@ setMethod("rCopula", signature("numeric", "spatial_copula"), spCop.rCop)
 # cutoff -> maximal distance that should be considered for fitting
 # bounds -> the bounds of the correlation function (typically c(0,1))
 # method -> the measure of association, either "kendall" or "spearman"
-fitCorFunSng <- function(bins, degree, cutoff, bounds, cor.method, weighted) {
+fitCorFunSng <- function(bins, degree, cutoff, bounds, cor_method, weighted) {
   if (weighted) {
     bins <- as.data.frame(bins[c("np","meanDists","lagCor")])
     if(!is.na(cutoff)) 
@@ -250,30 +250,30 @@ fitCorFunSng <- function(bins, degree, cutoff, bounds, cor.method, weighted) {
   print(fitCor)
   cat("Sum of squared residuals:",sum(fitCor$residuals^2),"\n")
   
-  if(cor.method=="fasttau") 
-    cor.method <- "kendall"
+  if(cor_method=="fasttau") 
+    cor_method <- "kendall"
   
   function(x) {
-    if (is.null(x)) return(cor.method)
+    if (is.null(x)) return(cor_method)
     return(pmin(bounds[2], pmax(bounds[1], 
                                 eval(predict(fitCor, data.frame(meanDists=x))))))
   }
 }
 
 fit_cor_fun <- function(bins, degree=3, cutoff=NA, tlags, bounds=c(0,1), 
-                      cor.method=NULL, weighted=FALSE){
-  if(is.null(cor.method)) {
+                      cor_method=NULL, weighted=FALSE){
+  if(is.null(cor_method)) {
     if(is.null(attr(bins,"cor.method")))
       stop("Neither the bins arguments has an attribute cor.method nor is the parameter cor.method provided.") 
     else 
-      cor.method <- attr(bins,"cor.method")
+      cor_method <- attr(bins,"cor.method")
   } else {
-    if(!is.null(attr(bins,"cor.method")) && cor.method != attr(bins,"cor.method"))
+    if(!is.null(attr(bins,"cor.method")) && cor_method != attr(bins,"cor.method"))
       stop("The cor.method attribute of the bins argument and the argument cor.method do not match.")
   }
   
   if(is.null(nrow(bins$lagCor))) # the spatial case
-    return(fitCorFunSng(bins, degree, cutoff, bounds, cor.method, weighted))
+    return(fitCorFunSng(bins, degree, cutoff, bounds, cor_method, weighted))
     
   # the spatio-temporal case
   degree <- rep(degree, length.out = nrow(bins$lagCor))
@@ -283,29 +283,29 @@ fit_cor_fun <- function(bins, degree=3, cutoff=NA, tlags, bounds=c(0,1),
                                                                  meanDists=bins$meanDists, 
                                                                  lagCor=bins$lagCor[j,]),
                                                       degree[j], cutoff, bounds, 
-                                                      cor.method, weighted)
+                                                      cor_method, weighted)
   }
   
   tlsort <- sort(tlags,decreasing=TRUE)
   
-  corFun <- function(h, time, tlags=tlsort) {
+  cor_fun <- function(h, time, tlags=tlsort) {
     t <- which(tlags==time)
     calcKTau[[time]](h)
   }
   
-  attr(corFun, "tlags") <- sort(tlags, decreasing=TRUE)
-  return(corFun)
+  attr(cor_fun, "tlags") <- sort(tlags, decreasing=TRUE)
+  return(cor_fun)
 }
 
 
 # towards b)
   
 ## loglikelihoods for a dynamic spatial copula
-loglik_by_lags.dyn <- function(bins, lagData, families, calcCor) {
-  moa <- switch(calcCor(NULL),
-                kendall=function(copula, h) iTau(copula, calcCor(h)),
-                spearman=function(copula, h) iRho(copula, calcCor(h)),
-                id=function(copula, h) calcCor(h))
+loglik_by_lags.dyn <- function(bins, lagData, families, calc_cor) {
+  moa <- switch(calc_cor(NULL),
+                kendall=function(copula, h) iTau(copula, calc_cor(h)),
+                spearman=function(copula, h) iRho(copula, calc_cor(h)),
+                id=function(copula, h) calc_cor(h))
   
   loglik <- NULL
   copulas <- list()
@@ -318,21 +318,21 @@ loglik_by_lags.dyn <- function(bins, lagData, families, calcCor) {
     for(i in 1:length(bins$meanDists)) {
       if(class(cop)!="indepCopula") {
         if(class(cop) == "asCopula") {
-          cop <- switch(calcCor(NULL),
+          cop <- switch(calc_cor(NULL),
                         kendall=fitASC2.itau(cop, lagData[[i]], 
-                                              tau=calcCor(bins$meanDists[i]))@copula,
+                                              tau=calc_cor(bins$meanDists[i]))@copula,
                         spearman=fitASC2.irho(cop, lagData[[i]],
-                                              rho=calcCor(bins$meanDists[i]))@copula,
-                        stop(paste(calcCor(NULL), "is not yet supported.")))
+                                              rho=calc_cor(bins$meanDists[i]))@copula,
+                        stop(paste(calc_cor(NULL), "is not yet supported.")))
           param <- cop@parameters
         } else {
           if(class(cop) == "cqsCopula") {
-            cop <- switch(calcCor(NULL),
+            cop <- switch(calc_cor(NULL),
                           kendall=fitCQSec.itau(cop, lagData[[i]], 
-                                                tau=calcCor(bins$meanDists[i]))@copula,
+                                                tau=calc_cor(bins$meanDists[i]))@copula,
                           spearman=fitCQSec.irho(cop, lagData[[i]],
-                                                rho=calcCor(bins$meanDists[i]))@copula,
-                          stop(paste(calcCor(NULL), "is not yet supported.")))
+                                                rho=calc_cor(bins$meanDists[i]))@copula,
+                          stop(paste(calc_cor(NULL), "is not yet supported.")))
             param <- cop@parameters
           } else {
             param <- moa(cop, bins$meanDists[i])
@@ -400,10 +400,10 @@ loglik_by_lags <- function(bins, data, families=c(normalCopula(),
                                                        tCopula(),
                                                        claytonCopula(), frankCopula(), 
                                                        gumbelCopula()),
-                                calcCor, lagSub=1:length(bins$meanDists)) {
+                                calc_cor, lag_sub=1:length(bins$meanDists)) {
   # spatio-temporal bins (from calc_bins on a stars cube) hold spatial and temporal lags
   if (is.list(bins$lags) && all(c("sp", "time") %in% names(bins$lags)))
-    return(.loglikByStLags(bins, data, families, calcCor, lagSub))
+    return(.loglikByStLags(bins, data, families, calc_cor, lag_sub))
   
   var <- attr(bins, "variable")
   
@@ -411,7 +411,7 @@ loglik_by_lags <- function(bins, data, families=c(normalCopula(),
     lagData <- bins$lagData
   }
   else {
-    lagData <- lapply(bins$lags[lagSub], 
+    lagData <- lapply(bins$lags[lag_sub], 
                       function(x) {
                         varValues <- .attrValues(data, var)
                         cbind(varValues[x[, 1]], varValues[x[, 2]])
@@ -424,34 +424,34 @@ loglik_by_lags <- function(bins, data, families=c(normalCopula(),
                       pairs[bool,]
                     })
   
-  if(missing(calcCor))
+  if(missing(calc_cor))
     return(loglik_by_lags.static(lagData, families))
   else
-    return(loglik_by_lags.dyn(lapply(bins, function(x) x[lagSub]),
-                                          lagData, families, calcCor))
+    return(loglik_by_lags.dyn(lapply(bins, function(x) x[lag_sub]),
+                                          lagData, families, calc_cor))
 }
 
 
 
 # towards d)
-compose_spatial_copula <- function(bestFit, families, bins, calcCor, range=max(bins$meanDists)) {
-  nFits <- length(bestFit)
+compose_spatial_copula <- function(best_fit, families, bins, calc_cor, range=max(bins$meanDists)) {
+  nFits <- length(best_fit)
   if(nFits > length(bins$meanDists))
     stop("There may not be less bins than best fits.\n")
   rangeIndex <- min(nFits, max(which(bins$meanDists <= range)))
   
-  if (missing(calcCor)) {
-    return(spatial_copula(components = as.list(families[bestFit[1:rangeIndex]]),
+  if (missing(calc_cor)) {
+    return(spatial_copula(components = as.list(families[best_fit[1:rangeIndex]]),
                     distances = bins$meanDists[1:rangeIndex], 
                     unit = "m"))
   }
   
   else {
-    rangeIndex <- min(rangeIndex, which(calcCor(bins$meanDists) <= 0))
+    rangeIndex <- min(rangeIndex, which(calc_cor(bins$meanDists) <= 0))
     
-    return(spatial_copula(components = as.list(families[bestFit[1:rangeIndex]]),
+    return(spatial_copula(components = as.list(families[best_fit[1:rangeIndex]]),
                     distances = bins$meanDists[1:rangeIndex], 
-                    unit = "m", spDepFun = calcCor))
+                    unit = "m", dep_fun = calc_cor))
   }
 }
 
@@ -470,12 +470,12 @@ fit_spatial_copula <- function(bins, data, cutoff=NA,
                         families=c(normalCopula(), tCopula(),
                                    claytonCopula(), frankCopula(),
                                    gumbelCopula()), ...) {
-  calcCor <- fit_cor_fun(bins, cutoff=cutoff, ...)
-  loglik <- loglik_by_lags(bins, data, families, calcCor)
+  calc_cor <- fit_cor_fun(bins, cutoff=cutoff, ...)
+  loglik <- loglik_by_lags(bins, data, families, calc_cor)
   
-  bestFit <- apply(apply(loglik$loglik, 1, rank),2, 
-                   function(x) which(x==length(families)))
+  # first family with the highest log-likelihood (ties occur where all families are independent)
+  best_fit <- apply(loglik$loglik, 1, which.max)
   
-  return(compose_spatial_copula(bestFit, families, bins, calcCor, range=cutoff))
+  return(compose_spatial_copula(best_fit, families, bins, calc_cor, range=cutoff))
 }
 
